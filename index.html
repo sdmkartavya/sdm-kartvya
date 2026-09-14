@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SDM KARTAVYA - Attendance</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="theme-color" content="#16263e">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16263e; --ink-soft:#374863;
+    --teal:#0e6e64; --teal-deep:#0a5750;
+    --gold:#b8862c; --gold-deep:#8f6a20;
+    --bg:#eaf2fb; --card:#ffffff;
+    --line:#e1e5df;
+    --ok:#0e6e64; --bad:#b0392b; --warn:#b8862c;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(180deg,#dfeaf9 0%,#f8fafc 45%,#fbf3de 100%);color:var(--ink);font-family:'Inter',Arial,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;}
+  .flagbar{height:4px;background:linear-gradient(90deg,#ff9933,#f4f2ea 50%,#128a4d);}
+  header{background:var(--ink);color:#fff;padding:16px 20px;}
+  .headerRow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .headerLeft{display:flex;align-items:center;gap:13px;min-width:0;}
+  .headerRight{text-align:right;flex-shrink:0;margin-left:auto;}
+  .hrInst{color:#e7d9b8;font-size:12px;font-weight:700;max-width:220px;}
+  .hrClock{color:#c7d0de;font-size:11px;margin-top:2px;}
+  .logo-circle{width:46px;height:46px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(255,255,255,.55);background:#fff;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;color:var(--ink);}
+  .headtext{min-width:0;}
+  header h1{margin:0;font-size:19px;font-weight:600;letter-spacing:.2px;}
+  header .sub{margin-top:2px;font-size:11.5px;color:#c7d0de;}
+  .wrap{max-width:520px;margin:0 auto;padding:16px 16px 40px;}
+
+  .card{background:var(--card);border-radius:14px;box-shadow:0 1px 3px rgba(22,38,62,.06),0 8px 24px rgba(22,38,62,.05);padding:18px;margin-bottom:16px;border:1px solid var(--line);}
+  label{font-size:11.5px;font-weight:600;color:var(--ink-soft);}
+  select,input{width:100%;padding:11px 12px;border:1px solid #d4dad2;border-radius:9px;font-size:14.5px;margin-top:6px;font-family:inherit;background:#fcfdfb;color:var(--ink);}
+  select:focus,input:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal);}
+
+  .staffChip{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--ink-soft);background:#f4f6f2;border-radius:8px;padding:8px 10px;}
+  .staffChip b{color:var(--ink);}
+
+  .stepRow{display:flex;gap:8px;margin-top:14px;}
+  .stepRow .step{flex:1;text-align:center;padding:7px 4px;border-radius:8px;background:#f4f6f2;font-size:10.5px;font-weight:700;color:#9aa39a;border:1px solid var(--line);transition:all .2s;}
+  .stepRow .step .ic{display:block;font-size:13px;margin-bottom:2px;}
+  .stepRow .step.active{background:#eef2f8;color:#2a4568;border-color:#c9d6e8;}
+  .stepRow .step.done{background:#e7f5f1;color:var(--teal-deep);border-color:#bfe4dc;}
+
+  .locrow{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11.5px;color:#6b7a68;}
+  .locrow .dot{width:7px;height:7px;border-radius:50%;background:#c9c9c9;flex-shrink:0;}
+  .locrow .dot.ready{background:var(--teal);}
+
+  .cameraBox{position:relative;display:none;margin-top:12px;}
+  .cameraBox.show{display:block;}
+  video,canvas{width:100%;border-radius:11px;background:#0d1420;}
+  .faceGuide{position:absolute;left:50%;top:calc(50% + 6px);transform:translate(-50%,-50%);
+    width:46%;height:72%;border:3px dashed rgba(255,255,255,.75);border-radius:50%;pointer-events:none;}
+
+  .btnrow{display:flex;gap:10px;margin-top:14px;}
+  button{border:none;border-radius:9px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;padding:12px;}
+  .btnrow button{flex:1;}
+  .btn-in{background:var(--teal);color:#fff;}
+  .btn-in:hover{background:var(--teal-deep);}
+  .btn-out{background:#c0392b;color:#fff;}
+  .btn-out:hover{background:#a52f22;}
+  .btn-reg{background:var(--ink);color:#fff;width:100%;margin-top:12px;}
+  button:disabled{opacity:.45;cursor:not-allowed;}
+
+  .status{margin-top:14px;padding:12px 14px;border-radius:9px;font-size:13.5px;font-weight:600;display:none;line-height:1.4;}
+  .status.ok{background:#e7f5f1;color:var(--ok);display:block;}
+  .status.bad{background:#fbeae7;color:var(--bad);display:block;}
+  .status.info{background:#eef2f8;color:#2a4568;display:block;}
+  .small{font-size:11px;color:#8a938a;margin-top:6px;}
+
+  .toggle{text-align:center;margin-top:10px;}
+  .toggle a{font-size:12.5px;color:var(--ink-soft);cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+
+  #loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:99;text-align:center;padding:20px;}
+  #loading .spinner{width:34px;height:34px;border-radius:50%;border:3px solid #d7ddd2;border-top-color:var(--teal);animation:spin 0.9s linear infinite;margin-bottom:14px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #loading .msg{font-size:13.5px;color:var(--ink-soft);max-width:280px;}
+
+  .timerow{display:flex;gap:10px;}
+  .timerow>div{flex:1;}
+  .sessionBlock{border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px;}
+  .sessionBlock h4{margin:0 0 8px;font-size:12.5px;font-family:'Inter';font-weight:700;color:var(--ink-soft);}
+
+  .quickGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 8px;text-align:center;}
+  .quickBtn{cursor:pointer;font-size:11px;font-weight:600;color:var(--ink-soft);}
+  .quickBtn .qIcon{width:44px;height:44px;margin:0 auto 6px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--ink));
+    color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(22,38,62,.18);}
+  .modal{position:fixed;inset:0;background:rgba(22,38,62,.45);display:none;align-items:center;justify-content:center;z-index:60;padding:16px;}
+  .modal.show{display:flex;}
+  .modal-card{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:440px;max-height:85vh;overflow-y:auto;}
+  .modal-card h3{margin:0 0 10px;font-size:16px;}
+  .modal-card .mclose{text-align:right;font-size:12px;color:var(--ink-soft);cursor:pointer;margin-bottom:4px;}
+  .modal-card table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px;}
+  .modal-card th,.modal-card td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left;}
+  .profileRow{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line);}
+  .profileRow b{color:var(--ink);}
+</style>
+</head>
+<body>
+<div id="loading"><div class="spinner"></div><div class="msg">Loading face verification model...</div></div>
+<div class="flagbar"></div>
+<div class="card" id="setupCard" style="display:none;">
+    <h3 style="margin:0 0 6px;font-size:16px;">Connect to SDM KARTAVYA backend</h3>
+    <div class="small" style="margin-bottom:8px;">Paste the Apps Script Web App URL from your deployment (ends in <code>/exec</code>). Stored only on this device.</div>
+    <input id="apiUrlInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+    <button class="btn-reg" onclick="saveApiUrl()">Save &amp; Continue</button>
+  </div>
+<header>
+  <div class="headerRow">
+    <div class="headerLeft">
+      <div class="logo-circle"><img src="data:image/jpeg;base64,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" alt="SDM KARTAVYA logo" style="width:100%;height:100%;object-fit:cover;"></div>
+      <div class="headtext">
+        <h1>SDM KARTAVYA</h1>
+        <div class="sub">Geo-Verified Staff Attendance</div>
+      </div>
+    </div>
+    <div class="headerRight">
+      <div class="hrInst" id="headerInstName">S.D.M. Degree College</div>
+      <div class="hrClock" id="clockLine">-</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <label>Library / Institution</label>
+    <select id="instSelect" onchange="onInstChange()">
+      <option value="Degree">S.D.M. Degree College - V. Seetaramaiah Memorial Library</option>
+      <option value="PU">S.D.M. P.U. College - Adv. V.G. Hegde Kaikatgeri Memorial Library</option>
+    </select>
+  </div>
+
+  <div class="card" id="checkinCard">
+    <label>Staff Member</label>
+    <select id="staffSelect"></select>
+    <div class="staffChip" id="staffChip" style="display:none;"></div>
+
+    <div class="stepRow">
+      <div class="step" id="stepLoc"><span class="ic">1</span>Location</div>
+      <div class="step" id="stepFace"><span class="ic">2</span>Face</div>
+      <div class="step" id="stepDone"><span class="ic">3</span>Attendance</div>
+    </div>
+
+    <div class="locrow"><span class="dot" id="locDot"></span><span id="locStatus">Fetching your location...</span></div>
+
+    <div class="cameraBox" id="cameraBox">
+      <video id="video" autoplay muted playsinline></video>
+      <div class="faceGuide"></div>
+    </div>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <div class="btnrow">
+      <button class="btn-in" onclick="submitAttendance('in')">Check In</button>
+      <button class="btn-out" onclick="submitAttendance('out')">Check Out</button>
+    </div>
+    <div class="status" id="statusBox"></div>
+  </div>
+
+  <div class="card" id="quickActionsCard">
+    <div class="quickGrid">
+      <div class="quickBtn" onclick="openOOD()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></div>OOD</div>
+      <div class="quickBtn" onclick="openLeaveSelf()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>Leave</div>
+      <div class="quickBtn" onclick="openMyReport()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></div>Report</div>
+      <div class="quickBtn" onclick="openWhatsNew()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M12 2l2.6 6.8L21 11l-6.4 2.2L12 20l-2.6-6.8L3 11l6.4-2.2z"/></svg></div>What's New</div>
+      <div class="quickBtn" onclick="openProfile()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></div>Profile</div>
+      <div class="quickBtn" onclick="openMovementHistory()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.3"/></svg></div>Movement</div>
+      <div class="quickBtn" onclick="openAttendanceAdmin()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div>Attendance</div>
+      <div class="quickBtn" onclick="openFAQ()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .5c0 1.7-2.5 2-2.5 3.5" stroke-linecap="round"/><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/></svg></div>FAQ</div>
+      <div class="quickBtn" onclick="openGrievance()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>Grievances</div>
+      <div class="quickBtn" onclick="openHelpdesk()"><div class="qIcon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0118 0v6a2 2 0 01-2 2h-1v-7h3M3 18v-6h3v7H4a2 2 0 01-2-2z"/></svg></div>Helpdesk</div>
+    </div>
+  </div>
+
+  <div class="toggle" id="pendingToggle" style="display:none;"><a onclick="showPending()">A staff member still needs to complete their face - tap here</a></div>
+  <div class="card" id="pendingCard" style="display:none;">
+    <h3 style="margin:0 0 4px;font-size:16px;">Complete Your Face Registration</h3>
+    <div class="small" style="margin-bottom:10px;">Your admin has already added you with your name and timing. Pick your name and capture your face to finish - no need to fill the form again.</div>
+    <select id="pendingSelect"></select>
+    <div class="cameraBox show" style="margin-top:12px;"><video id="pendVideo" autoplay muted playsinline></video></div>
+    <canvas id="pendCanvas" style="display:none;"></canvas>
+    <button class="btn-reg" onclick="captureAndCompletePending()">Capture My Face</button>
+    <div class="status" id="pendStatus"></div>
+    <div class="toggle"><a onclick="hidePending()">back to check-in</a></div>
+  </div>
+
+  <div class="toggle"><a onclick="showRegister()">+ Register a new staff face (admin/first-time setup)</a></div>
+
+  <div class="card" id="registerCard" style="display:none;">
+    <h3 style="margin:0 0 4px;font-size:17px;">Register Staff</h3>
+    <div class="small">Registering under: <b id="regInstName"></b></div>
+    <label style="margin-top:10px;display:block;">Full Name</label>
+    <input id="regName" placeholder="e.g. Ganesh Naik">
+    <label style="margin-top:8px;display:block;">Designation</label>
+    <input id="regDesignation" placeholder="e.g. Library Assistant">
+    <label style="margin-top:8px;display:block;">Phone</label>
+    <input id="regPhone" placeholder="10-digit mobile">
+
+    <div class="sessionBlock">
+      <h4>Weekday timing (Mon-Fri)</h4>
+      <div class="timerow">
+        <div><label>In</label><input type="time" id="regWeekdayIn" value="09:30"></div>
+        <div><label>Out</label><input type="time" id="regWeekdayOut" value="17:30"></div>
+      </div>
+    </div>
+    <div class="sessionBlock">
+      <h4>Saturday timing</h4>
+      <div class="timerow">
+        <div><label>In</label><input type="time" id="regSaturdayIn" value="09:30"></div>
+        <div><label>Out</label><input type="time" id="regSaturdayOut" value="13:00"></div>
+      </div>
+    </div>
+    <div class="small">Sunday is the fixed weekly off for everyone - no timing needed.</div>
+
+    <video id="regVideo" autoplay muted playsinline style="margin-top:12px;border-radius:11px;width:100%;background:#0d1420;"></video>
+    <canvas id="regCanvas" style="display:none;"></canvas>
+    <button class="btn-reg" onclick="captureAndRegister()">Capture Face &amp; Register</button>
+    <div class="status" id="regStatus"></div>
+    <div class="toggle"><a onclick="showCheckin()">back to check-in</a></div>
+  </div>
+
+  <div class="toggle"><a onclick="changeApiUrl()">Change backend URL</a></div>
+  <div class="toggle"><a href="admin.html">Open Admin / Reports panel &rarr;</a></div>
+</div>
+
+<div class="modal" id="oodModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('oodModal')">Close &#10005;</div>
+    <h3>On Other Duty</h3>
+    <div id="oodOpenNote" class="small" style="margin-bottom:8px;"></div>
+    <div id="oodOutForm">
+      <label style="font-size:12px;font-weight:600;">Purpose</label>
+      <input id="oodPurpose" placeholder="e.g. Book delivery, bank work">
+      <label style="font-size:12px;font-weight:600;margin-top:8px;display:block;">Destination</label>
+      <input id="oodDestination" placeholder="e.g. Taluk office">
+      <button class="btn-reg" onclick="submitOODOut()">Log Movement Out</button>
+    </div>
+    <div id="oodInForm" style="display:none;">
+      <button class="btn-reg" onclick="submitOODIn()">Log Return (Movement In)</button>
+    </div>
+    <div class="status" id="oodStatus"></div>
+  </div>
+</div>
+
+<div class="modal" id="leaveSelfModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('leaveSelfModal')">Close &#10005;</div>
+    <h3>Mark Leave</h3>
+    <label style="font-size:12px;font-weight:600;">Date</label>
+    <input type="date" id="leaveSelfDate">
+    <label style="font-size:12px;font-weight:600;margin-top:8px;display:block;">Remarks (optional)</label>
+    <input id="leaveSelfRemarks" placeholder="e.g. Casual leave">
+    <button class="btn-reg" onclick="submitLeaveSelf()">Submit Leave</button>
+    <div class="status" id="leaveSelfStatus"></div>
+  </div>
+</div>
+
+<div class="modal" id="reportModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('reportModal')">Close &#10005;</div>
+    <h3>My Attendance Report</h3>
+    <div class="timerow">
+      <select id="reportMonth" onchange="loadMyReport()"></select>
+      <select id="reportYear" onchange="loadMyReport()"></select>
+    </div>
+    <table><thead><tr><th>Date</th><th>In</th><th>Out</th><th>Status</th></tr></thead><tbody id="reportTbody"></tbody></table>
+  </div>
+</div>
+
+<div class="modal" id="whatsNewModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('whatsNewModal')">Close &#10005;</div>
+    <h3>What's New</h3>
+    <div class="profileRow"><span>Voice guidance</span><b>Added</b></div>
+    <div class="profileRow"><span>Self-hosted face model (faster, more reliable)</span><b>Added</b></div>
+    <div class="profileRow"><span>Complete-your-face flow</span><b>Added</b></div>
+    <div class="profileRow"><span>Quick actions (this menu)</span><b>Added</b></div>
+  </div>
+</div>
+
+<div class="modal" id="movementModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('movementModal')">Close &#10005;</div>
+    <h3>My Movement History (last 14 days)</h3>
+    <table><thead><tr><th>Date</th><th>Out</th><th>Purpose</th><th>In</th></tr></thead><tbody id="movementTbody"></tbody></table>
+  </div>
+</div>
+
+<div class="modal" id="attendanceAdminModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('attendanceAdminModal')">Close &#10005;</div>
+    <h3>Mark Attendance for Others</h3>
+    <div class="small">Marking attendance for someone else requires admin access, to keep the geo/face verification meaningful. Open the Admin panel and use the Attendance tab to add leave or correct a record.</div>
+    <a href="admin.html" class="btn-reg" style="display:block;text-align:center;text-decoration:none;margin-top:12px;">Open Admin Panel</a>
+  </div>
+</div>
+
+<div class="modal" id="faqModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('faqModal')">Close &#10005;</div>
+    <h3>FAQ</h3>
+    <div class="profileRow" style="display:block;"><b>Location fails to load?</b><div class="small">Allow location access in your browser/site settings, then reload.</div></div>
+    <div class="profileRow" style="display:block;"><b>Camera doesn't show?</b><div class="small">Allow camera access, or use the GitHub Pages link instead of the direct Apps Script link.</div></div>
+    <div class="profileRow" style="display:block;"><b>Forgot to check out?</b><div class="small">Contact your admin - they can review and correct it from the Admin panel.</div></div>
+    <div class="profileRow" style="display:block;border-bottom:none;"><b>Face not matching?</b><div class="small">Retry with good lighting, no cap/mask, holding the phone the way you did at registration.</div></div>
+  </div>
+</div>
+
+<div class="modal" id="grievanceModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('grievanceModal')">Close &#10005;</div>
+    <h3>Grievances</h3>
+    <label style="font-size:12px;font-weight:600;">Your message</label>
+    <textarea id="grievanceMsg" rows="4" style="width:100%;padding:10px;border:1px solid #d4dad2;border-radius:9px;font-family:inherit;font-size:13px;margin-top:4px;" placeholder="Describe the issue..."></textarea>
+    <button class="btn-reg" onclick="submitGrievanceMsg()">Submit</button>
+    <div class="status" id="grievanceStatus"></div>
+  </div>
+</div>
+
+<div class="modal" id="profileModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('profileModal')">Close &#10005;</div>
+    <h3>My Profile</h3>
+    <div id="profileBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="helpdeskModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('helpdeskModal')">Close &#10005;</div>
+    <h3>Helpdesk</h3>
+    <div class="small">For any issue with attendance, timing, or this app, contact your admin directly.</div>
+    <div class="profileRow"><span>Degree College</span><b>Contact your library-in-charge</b></div>
+    <div class="profileRow"><span>P.U. College</span><b>Contact your library-in-charge</b></div>
+  </div>
+</div>
+
+<script src="face-api.min.js"></script>
+<script>
+const MODEL_URLS = [
+  'models',
+  'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights',
+  'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights',
+  'https://unpkg.com/face-api.js@0.22.2/weights'
+];
+let staffList = [];
+let currentPos = null;
+let attemptsLeft = 5;
+let API_URL = localStorage.getItem('sdm_kartavya_api_url') || '';
+
+function saveApiUrl() {
+  const v = document.getElementById('apiUrlInput').value.trim();
+  if (!v.startsWith('https://script.google.com/')) { alert('Paste the full Apps Script web app URL (ends in /exec).'); return; }
+  localStorage.setItem('sdm_kartavya_api_url', v); API_URL = v;
+  document.getElementById('setupCard').style.display = 'none';
+  boot();
+}
+function changeApiUrl() {
+  document.getElementById('apiUrlInput').value = API_URL;
+  document.getElementById('setupCard').style.display = 'block';
+}
+async function apiPost(body) {
+  const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Server error');
+  return json.data;
+}
+const apiGetStaffList = institution => apiPost({ action: 'getStaffList', institution });
+const apiGetStaffDescriptor = (institution, staffId) => apiPost({ action: 'getStaffDescriptor', institution, staffId });
+const apiReverseGeocode = (lat, lng) => apiPost({ action: 'reverseGeocode', lat, lng });
+const apiMarkAttendance = data => apiPost({ action: 'markAttendance', data });
+const apiRegisterStaff = data => apiPost({ action: 'registerStaff', data });
+const apiCompleteStaffFace = data => apiPost({ action: 'completeStaffFace', data });
+const apiGetOpenMovement = (institution, staffId) => apiPost({ action: 'getOpenMovement', institution, staffId });
+const apiLogMovementOut = data => apiPost({ action: 'logMovementOut', data });
+const apiLogMovementIn = data => apiPost({ action: 'logMovementIn', data });
+const apiMarkLeave = data => apiPost({ action: 'markLeave', data });
+const apiGetStaffOwnAttendance = (institution, staffId, fromDate, toDate) => apiPost({ action: 'getStaffOwnAttendance', institution, staffId, fromDate, toDate });
+const apiGetMovementLog = (institution, fromDate, toDate) => apiPost({ action: 'getMovementLog', institution, fromDate, toDate });
+const apiSubmitGrievance = data => apiPost({ action: 'submitGrievance', data });
+const API_FN = {
+  reverseGeocode: apiReverseGeocode,
+  getStaffDescriptor: apiGetStaffDescriptor,
+  markAttendance: apiMarkAttendance,
+  registerStaff: apiRegisterStaff,
+  completeStaffFace: apiCompleteStaffFace,
+  getOpenMovement: apiGetOpenMovement,
+  logMovementOut: apiLogMovementOut,
+  logMovementIn: apiLogMovementIn,
+  markLeave: apiMarkLeave,
+  getStaffOwnAttendance: apiGetStaffOwnAttendance,
+  getMovementLog: apiGetMovementLog,
+  submitGrievance: apiSubmitGrievance
+};
+function callServer(fnName, ...args) { return API_FN[fnName](...args); }
+function speak(text) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95; u.pitch = 1;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function instSpokenName(key) {
+  return key === 'PU'
+    ? 'S D M P U College, Honavar'
+    : 'S D M Degree College, Honavar';
+}
+function speakWelcome() {
+  speak('Welcome to ' + instSpokenName(currentInst()) + '. S D M Kartavya.');
+}
+function resetAttempts() { attemptsLeft = 5; }
+
+async function loadModels() {
+  const loadingEl = document.getElementById('loading');
+  const msg = loadingEl.querySelector('.msg');
+  const timeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('Timed out')), ms))]);
+  let lastErr = null;
+  for (const url of MODEL_URLS) {
+    try {
+      msg.textContent = 'Loading face verification model...';
+      await timeout(faceapi.nets.tinyFaceDetector.loadFromUri(url), 25000);
+      msg.textContent = 'Loading face verification model... (2/3)';
+      await timeout(faceapi.nets.faceLandmark68Net.loadFromUri(url), 25000);
+      msg.textContent = 'Loading face verification model... (3/3)';
+      await timeout(faceapi.nets.faceRecognitionNet.loadFromUri(url), 25000);
+      loadingEl.style.display = 'none';
+      return;
+    } catch (err) { lastErr = err; }
+  }
+  loadingEl.innerHTML = `
+    <div style="max-width:300px;">
+      <div style="font-weight:700;color:var(--bad);margin-bottom:8px;">Could not load the face model.</div>
+      <div style="font-size:13px;color:#555;margin-bottom:14px;">
+        This usually means a slow or blocked internet connection on this device.
+        Try switching to Wi-Fi, or a different network, then retry.
+      </div>
+      <button onclick="location.reload()" style="padding:10px 18px;border:none;border-radius:9px;background:var(--ink);color:#fff;font-weight:700;">Retry</button>
+    </div>`;
+}
+function startCamera(videoId) {
+  const video = document.getElementById(videoId);
+  try {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+      .then(stream => video.srcObject = stream)
+      .catch(() => setStatus('statusBox', 'bad', 'Camera permission denied. Allow camera access to mark attendance.'));
+  } catch (err) {
+    setStatus('statusBox', 'bad', 'Camera is blocked in this window. If this keeps happening, open the GitHub Pages link instead of the script.google.com link.');
+  }
+}
+function setStep(id, state) {
+  const el = document.getElementById(id);
+  el.classList.remove('active', 'done');
+  if (state) el.classList.add(state);
+}
+function showCamera() { document.getElementById('cameraBox').classList.add('show'); }
+function hideCamera() { document.getElementById('cameraBox').classList.remove('show'); }
+
+function getLocation() {
+  setStep('stepLoc', 'active');
+  if (!navigator.geolocation) { document.getElementById('locStatus').textContent = 'Geolocation not supported on this device.'; return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    currentPos = pos.coords;
+    document.getElementById('locStatus').textContent = 'Location captured (\u00b1' + Math.round(pos.coords.accuracy) + 'm accuracy).';
+    document.getElementById('locDot').classList.add('ready');
+    setStep('stepLoc', 'done');
+    setStep('stepFace', 'active');
+    speak('Location success.');
+    startCamera('video');
+    showCamera();
+  }, () => { document.getElementById('locStatus').textContent = 'Location permission denied - required to mark attendance.'; },
+  { enableHighAccuracy: true, timeout: 10000 });
+}
+
+function currentInst() { return document.getElementById('instSelect').value; }
+function currentInstName() { return document.getElementById('instSelect').selectedOptions[0].text; }
+
+function onInstChange() {
+  document.getElementById('regInstName').textContent = currentInstName();
+  document.getElementById('headerInstName').textContent = currentInstName().split(' - ')[0];
+  loadStaff();
+  speakWelcome();
+}
+
+function loadStaff() {
+  if (!API_URL) return;
+  apiGetStaffList(currentInst()).then(list => {
+    staffList = list.filter(s => s.active && s.hasFace);
+    const sel = document.getElementById('staffSelect');
+    sel.innerHTML = staffList.map(s => `<option value="${s.staffId}">${s.name}</option>`).join('');
+    updateStaffChip();
+
+    const pending = list.filter(s => s.active && !s.hasFace);
+    const pendToggle = document.getElementById('pendingToggle');
+    if (pending.length) {
+      pendToggle.style.display = 'block';
+      pendToggle.querySelector('a').textContent = pending.length === 1
+        ? `${pending[0].name} still needs to complete their face - tap here`
+        : `${pending.length} staff still need to complete their face - tap here`;
+      document.getElementById('pendingSelect').innerHTML = pending.map(s => `<option value="${s.staffId}">${s.name}</option>`).join('');
+    } else {
+      pendToggle.style.display = 'none';
+      document.getElementById('pendingCard').style.display = 'none';
+    }
+  }).catch(err => setStatus('statusBox','bad','Could not load staff list: ' + err.message));
+}
+function updateStaffChip() {
+  const s = staffList.find(x => x.staffId === document.getElementById('staffSelect').value);
+  const chip = document.getElementById('staffChip');
+  if (!s) { chip.style.display = 'none'; return; }
+  chip.style.display = 'flex';
+  chip.innerHTML = `<span>${s.designation || 'Staff'}</span><span>Weekday <b>${s.weekdayIn||'-'}-${s.weekdayOut||'-'}</b> | Sat <b>${s.saturdayIn||'-'}-${s.saturdayOut||'-'}</b></span>`;
+}
+document.addEventListener('change', e => {
+  if (e.target.id === 'staffSelect') {
+    updateStaffChip();
+    resetAttempts();
+    const s = staffList.find(x => x.staffId === e.target.value);
+    if (s) speak(s.name);
+  }
+});
+
+function captureFrame(videoId, canvasId) {
+  const video = document.getElementById(videoId), canvas = document.getElementById(canvasId);
+  canvas.width = video.videoWidth || 320; canvas.height = video.videoHeight || 240;
+  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+  return canvas;
+}
+async function getDescriptor(canvas) {
+  const det = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions())
+    .withFaceLandmarks().withFaceDescriptor();
+  return det ? Array.from(det.descriptor) : null;
+}
+function callServer(fnName, ...args) {
+  return new Promise((resolve, reject) => {
+    google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[fnName](...args);
+  });
+}
+function setStatus(id, cls, msg) { const el = document.getElementById(id); el.className = 'status ' + cls; el.textContent = msg; }
+
+function formatOverlayTime(d) {
+  const day = d.toLocaleDateString('en-IN', { weekday: 'long', timeZone: 'Asia/Kolkata' });
+  const date = d.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata' });
+  const time = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
+  return `${day}, ${date} ${time} GMT +05:30`;
+}
+function wrapText(ctx, text, maxWidth) {
+  const words = (text || '').split(' '); const lines = []; let line = '';
+  words.forEach(w => { const test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = w; } else line = test; });
+  if (line) lines.push(line); return lines.slice(0, 3);
+}
+function drawGeoOverlay(canvas, opts) {
+  const ctx = canvas.getContext('2d'); const w = canvas.width, h = canvas.height;
+  const barH = Math.max(150, Math.round(h * 0.30)); const y0 = h - barH;
+  const mapSize = Math.round(barH * 0.62); const pad = 12;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(0, y0, w, barH);
+  const mx = pad, my = y0 + (barH - mapSize) / 2;
+  ctx.fillStyle = '#dfe7f0'; ctx.fillRect(mx, my, mapSize, mapSize);
+  ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1;
+  for (let gx = mx; gx <= mx + mapSize; gx += mapSize / 5) { ctx.beginPath(); ctx.moveTo(gx, my); ctx.lineTo(gx, my + mapSize); ctx.stroke(); }
+  for (let gy = my; gy <= my + mapSize; gy += mapSize / 5) { ctx.beginPath(); ctx.moveTo(mx, gy); ctx.lineTo(mx + mapSize, gy); ctx.stroke(); }
+  const px = mx + mapSize / 2, py = my + mapSize / 2;
+  ctx.fillStyle = '#b0392b'; ctx.beginPath(); ctx.arc(px, py - 6, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(px - 6, py - 2); ctx.lineTo(px + 6, py - 2); ctx.lineTo(px, py + 10); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.strokeRect(mx, my, mapSize, mapSize);
+  const tx = mx + mapSize + pad; let ty = y0 + pad + 14;
+  ctx.fillStyle = '#fff'; ctx.font = `bold ${Math.round(barH * 0.11)}px sans-serif`;
+  ctx.fillText(opts.title, tx, ty); ty += barH * 0.14;
+  ctx.font = `${Math.round(barH * 0.085)}px sans-serif`;
+  wrapText(ctx, opts.address || '', w - tx - pad).forEach(line => { ctx.fillText(line, tx, ty); ty += barH * 0.12; });
+  ctx.font = `${Math.round(barH * 0.09)}px sans-serif`;
+  ctx.fillText(`Lat ${opts.lat.toFixed(6)} Long ${opts.lng.toFixed(6)}`, tx, ty); ty += barH * 0.13;
+  ctx.fillText(opts.timeStr, tx, ty);
+  const badge = 'SDM KARTAVYA';
+  ctx.font = `bold ${Math.round(h * 0.028)}px sans-serif`;
+  const bw = ctx.measureText(badge).width + 16;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(w - bw - 8, 8, bw, Math.round(h * 0.045));
+  ctx.fillStyle = '#fff'; ctx.fillText(badge, w - bw, 8 + Math.round(h * 0.032));
+  return canvas;
+}
+async function stampPhoto(canvas, lat, lng) {
+  let address = null;
+  try { address = await callServer('reverseGeocode', lat, lng); } catch (e) {}
+  drawGeoOverlay(canvas, {
+    title: address ? address.split(',')[0] : currentInstName(),
+    address: address || 'Address unavailable - GPS coordinates below are authoritative',
+    lat, lng, timeStr: formatOverlayTime(new Date())
+  });
+  return canvas.toDataURL('image/jpeg', 0.8);
+}
+
+async function submitAttendance(type) {
+  const staffId = document.getElementById('staffSelect').value;
+  const staff = staffList.find(s => s.staffId === staffId);
+  if (!staff) return setStatus('statusBox','bad','No staff selected.');
+  if (!currentPos) return setStatus('statusBox','bad','Waiting for GPS location - please allow location access.');
+  const vElCheck = document.getElementById('video');
+  if (!vElCheck.srcObject) {
+    startCamera('video'); showCamera();
+    setStep('stepFace', 'active'); setStep('stepDone', null);
+    return setStatus('statusBox','info','Camera starting - line up your face in the frame, then press this button again.');
+  }
+  setStatus('statusBox','info','Verifying face...');
+  speak('Capture face.');
+  const canvas = captureFrame('video','canvas');
+  const liveDescriptor = await getDescriptor(canvas);
+  if (!liveDescriptor) {
+    attemptsLeft = Math.max(0, attemptsLeft - 1);
+    speak('No face detected. You have ' + attemptsLeft + ' chances remaining.');
+    return setStatus('statusBox','bad','No face detected - face the camera clearly and retry.');
+  }
+  setStep('stepFace', 'done');
+  setStep('stepDone', 'active');
+  speak('Face captured successfully.');
+  try {
+    const refDescriptor = await callServer('getStaffDescriptor', currentInst(), staffId);
+    const faceDistance = (refDescriptor && refDescriptor.length) ? faceapi.euclideanDistance(liveDescriptor, refDescriptor) : null;
+    setStatus('statusBox','info','Stamping location & time...');
+    const photoBase64 = await stampPhoto(canvas, currentPos.latitude, currentPos.longitude);
+    const res = await callServer('markAttendance', {
+      institution: currentInst(), staffId: staff.staffId, name: staff.name, designation: staff.designation,
+      lat: currentPos.latitude, lng: currentPos.longitude, photoBase64, faceDistance, type
+    });
+    setStatus('statusBox', res.accepted ? 'ok' : 'bad', `${res.status} - ${res.time} on ${res.date} (${res.distance}m from campus)`);
+    setStep('stepDone', res.accepted ? 'done' : null);
+    if (res.accepted) {
+      speak('Attendance taken successfully. Thank you. Good day.');
+      resetAttempts();
+    } else {
+      attemptsLeft = Math.max(0, attemptsLeft - 1);
+      speak('Attendance not verified. You have ' + attemptsLeft + ' chances remaining.');
+    }
+  } catch (err) {
+    setStatus('statusBox','bad', err.message || String(err));
+    setStep('stepDone', null);
+    attemptsLeft = Math.max(0, attemptsLeft - 1);
+    speak('Something went wrong. You have ' + attemptsLeft + ' chances remaining.');
+  } finally {
+    hideCamera();
+    const vEl = document.getElementById('video');
+    if (vEl.srcObject) { vEl.srcObject.getTracks().forEach(t => t.stop()); vEl.srcObject = null; }
+  }
+}
+
+function showRegister() {
+  document.getElementById('checkinCard').style.display = 'none';
+  document.getElementById('quickActionsCard').style.display = 'none';
+  document.getElementById('registerCard').style.display = 'block';
+  document.getElementById('regInstName').textContent = currentInstName();
+  startCamera('regVideo');
+}
+function showCheckin() {
+  document.getElementById('registerCard').style.display = 'none';
+  document.getElementById('checkinCard').style.display = 'block';
+  document.getElementById('quickActionsCard').style.display = 'block';
+}
+function showPending() {
+  document.getElementById('checkinCard').style.display = 'none';
+  document.getElementById('quickActionsCard').style.display = 'none';
+  document.getElementById('pendingToggle').style.display = 'none';
+  document.getElementById('pendingCard').style.display = 'block';
+}
+function hidePending() {
+  document.getElementById('pendingCard').style.display = 'none';
+  document.getElementById('checkinCard').style.display = 'block';
+  document.getElementById('quickActionsCard').style.display = 'block';
+  document.getElementById('pendingToggle').style.display = 'block';
+}
+
+/* ---- Quick actions ---- */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function currentStaff() { return staffList.find(s => s.staffId === document.getElementById('staffSelect').value); }
+
+function openOOD() {
+  const s = currentStaff(); if (!s) return;
+  callServer('getOpenMovement', currentInst(), s.staffId).then(open => {
+    document.getElementById('oodStatus').textContent = '';
+    if (open) {
+      document.getElementById('oodOpenNote').textContent = `Out since ${open.TimeOut} - ${open.Purpose || ''} (${open.Destination || ''})`;
+      document.getElementById('oodOutForm').style.display = 'none';
+      document.getElementById('oodInForm').style.display = 'block';
+    } else {
+      document.getElementById('oodOpenNote').textContent = '';
+      document.getElementById('oodOutForm').style.display = 'block';
+      document.getElementById('oodInForm').style.display = 'none';
+    }
+    openModal('oodModal');
+  });
+}
+function submitOODOut() {
+  const s = currentStaff(); if (!s) return;
+  callServer('logMovementOut', {
+    institution: currentInst(), staffId: s.staffId, name: s.name, designation: s.designation,
+    purpose: document.getElementById('oodPurpose').value, destination: document.getElementById('oodDestination').value
+  }).then(() => { closeModal('oodModal'); setStatus('statusBox','ok','Movement logged - have a safe trip.'); })
+    .catch(err => { document.getElementById('oodStatus').textContent = err.message; });
+}
+function submitOODIn() {
+  const s = currentStaff(); if (!s) return;
+  callServer('logMovementIn', { institution: currentInst(), staffId: s.staffId })
+    .then(() => { closeModal('oodModal'); setStatus('statusBox','ok','Welcome back - movement closed.'); })
+    .catch(err => { document.getElementById('oodStatus').textContent = err.message; });
+}
+
+function openLeaveSelf() {
+  const s = currentStaff(); if (!s) return;
+  document.getElementById('leaveSelfDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('leaveSelfStatus').textContent = '';
+  openModal('leaveSelfModal');
+}
+function submitLeaveSelf() {
+  const s = currentStaff(); if (!s) return;
+  callServer('markLeave', {
+    institution: currentInst(), staffId: s.staffId, name: s.name, designation: s.designation,
+    date: document.getElementById('leaveSelfDate').value, remarks: document.getElementById('leaveSelfRemarks').value
+  }).then(() => { closeModal('leaveSelfModal'); setStatus('statusBox','ok','Leave marked for ' + document.getElementById('leaveSelfDate').value + '.'); })
+    .catch(err => { document.getElementById('leaveSelfStatus').textContent = err.message; });
+}
+
+function statusColor(s) {
+  if (s === 'P' || s === 'Checked Out') return '#0e6e64';
+  if (s === 'L') return '#b8862c';
+  if (s === 'A') return '#b0392b';
+  if (s === 'LV') return '#5b3fc0';
+  if (s === 'H') return '#c0692b';
+  if (s === 'WO') return '#888';
+  return '#333';
+}
+function openMyReport() {
+  const s = currentStaff(); if (!s) return;
+  const monthSel = document.getElementById('reportMonth');
+  const yearSel = document.getElementById('reportYear');
+  if (!monthSel.options.length) {
+    ['January','February','March','April','May','June','July','August','September','October','November','December']
+      .forEach((m, i) => monthSel.innerHTML += `<option value="${i+1}">${m}</option>`);
+    const nowY = new Date().getFullYear();
+    for (let y = nowY - 1; y <= nowY + 1; y++) yearSel.innerHTML += `<option value="${y}">${y}</option>`;
+    const now = new Date();
+    monthSel.value = now.getMonth() + 1;
+    yearSel.value = now.getFullYear();
+  }
+  loadMyReport();
+  openModal('reportModal');
+}
+function loadMyReport() {
+  const s = currentStaff(); if (!s) return;
+  const month = parseInt(document.getElementById('reportMonth').value, 10);
+  const year = parseInt(document.getElementById('reportYear').value, 10);
+  const pad = n => String(n).padStart(2, '0');
+  const lastDay = new Date(year, month, 0).getDate();
+  const fromDate = `${year}-${pad(month)}-01`;
+  const toDate = `${year}-${pad(month)}-${pad(lastDay)}`;
+  callServer('getStaffOwnAttendance', currentInst(), s.staffId, fromDate, toDate).then(rows => {
+    rows.sort((a,b) => a.Date < b.Date ? -1 : 1);
+    document.getElementById('reportTbody').innerHTML = rows.map(r => {
+      const day = r.Date.slice(8,10);
+      const status = r.StatusIn || '-';
+      return `<tr><td>${day}</td><td>${r.TimeIn||'-'}</td><td>${r.TimeOut||'-'}</td>
+        <td style="color:${statusColor(status)};font-weight:700;">${status}</td></tr>`;
+    }).join('') || '<tr><td colspan="4" style="text-align:center;color:#999;">No records.</td></tr>';
+  });
+}
+
+function openProfile() {
+  const s = currentStaff(); if (!s) return;
+  document.getElementById('profileBody').innerHTML = `
+    <div class="profileRow"><span>Name</span><b>${s.name}</b></div>
+    <div class="profileRow"><span>Designation</span><b>${s.designation || '-'}</b></div>
+    <div class="profileRow"><span>Phone</span><b>${s.phone || '-'}</b></div>
+    <div class="profileRow"><span>Staff ID</span><b>${s.staffId}</b></div>
+    <div class="profileRow"><span>Weekday</span><b>${s.weekdayIn||'-'} - ${s.weekdayOut||'-'}</b></div>
+    <div class="profileRow"><span>Saturday</span><b>${s.saturdayIn||'-'} - ${s.saturdayOut||'-'}</b></div>`;
+  openModal('profileModal');
+}
+function openHelpdesk() { openModal('helpdeskModal'); }
+function openWhatsNew() { openModal('whatsNewModal'); }
+
+function openMovementHistory() {
+  const s = currentStaff(); if (!s) return;
+  const to = new Date(); const from = new Date(); from.setDate(from.getDate() - 13);
+  const fmt = d => d.toISOString().slice(0,10);
+  callServer('getMovementLog', currentInst(), fmt(from), fmt(to)).then(rows => {
+    const mine = rows.filter(r => r.StaffID === s.staffId);
+    document.getElementById('movementTbody').innerHTML = mine.map(r => `
+      <tr><td>${r.Date}</td><td>${r.TimeOut}</td><td>${r.Purpose||''}</td><td>${r.TimeIn||'-'}</td></tr>
+    `).join('') || '<tr><td colspan="4" style="text-align:center;color:#999;">No movement records.</td></tr>';
+    openModal('movementModal');
+  });
+}
+function openAttendanceAdmin() { openModal('attendanceAdminModal'); }
+function openFAQ() { openModal('faqModal'); }
+function openGrievance() {
+  document.getElementById('grievanceMsg').value = '';
+  document.getElementById('grievanceStatus').textContent = '';
+  openModal('grievanceModal');
+}
+function submitGrievanceMsg() {
+  const s = currentStaff(); if (!s) return;
+  const msg = document.getElementById('grievanceMsg').value.trim();
+  if (!msg) return;
+  callServer('submitGrievance', { institution: currentInst(), staffId: s.staffId, name: s.name, message: msg })
+    .then(() => { closeModal('grievanceModal'); setStatus('statusBox','ok','Grievance submitted - your admin will follow up.'); })
+    .catch(err => { document.getElementById('grievanceStatus').textContent = err.message; });
+}
+
+async function captureAndCompletePending() {
+  const staffId = document.getElementById('pendingSelect').value;
+  if (!staffId) return setStatus('pendStatus','bad','Select your name first.');
+  if (!currentPos) return setStatus('pendStatus','bad','Waiting for GPS location - please allow location access.');
+  const canvas = captureFrame('pendVideo','pendCanvas');
+  const descriptor = await getDescriptor(canvas);
+  if (!descriptor) return setStatus('pendStatus','bad','No face detected - center your face in frame and retry.');
+  try {
+    setStatus('pendStatus','info','Saving...');
+    const photoBase64 = await stampPhoto(canvas, currentPos.latitude, currentPos.longitude);
+    await callServer('completeStaffFace', { institution: currentInst(), staffId, photoBase64, faceDescriptor: descriptor });
+    setStatus('pendStatus','ok','Face saved. You can now check in from the main screen.');
+    loadStaff();
+  } catch (err) { setStatus('pendStatus','bad', err.message || String(err)); }
+}
+
+async function captureAndRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const designation = document.getElementById('regDesignation').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const weekdayIn = document.getElementById('regWeekdayIn').value;
+  const weekdayOut = document.getElementById('regWeekdayOut').value;
+  const saturdayIn = document.getElementById('regSaturdayIn').value;
+  const saturdayOut = document.getElementById('regSaturdayOut').value;
+  if (!name) return setStatus('regStatus','bad','Enter the staff name.');
+  if (!currentPos) return setStatus('regStatus','bad','Waiting for GPS location - please allow location access.');
+  const canvas = captureFrame('regVideo','regCanvas');
+  const descriptor = await getDescriptor(canvas);
+  if (!descriptor) return setStatus('regStatus','bad','No face detected - center the face in frame and retry.');
+  try {
+    setStatus('regStatus','info','Saving...');
+    const photoBase64 = await stampPhoto(canvas, currentPos.latitude, currentPos.longitude);
+    const res = await callServer('registerStaff', {
+      institution: currentInst(), name, designation, phone,
+      weekdayIn, weekdayOut, saturdayIn, saturdayOut, photoBase64, faceDescriptor: descriptor
+    });
+    setStatus('regStatus','ok','Registered. Staff ID: ' + res.staffId);
+    loadStaff();
+  } catch (err) { setStatus('regStatus','bad', err.message || String(err)); }
+}
+
+function tickClock() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-IN', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
+  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
+  document.getElementById('clockLine').textContent = dateStr + ' - ' + timeStr;
+}
+
+function boot() {
+  document.getElementById('regInstName').textContent = currentInstName();
+  document.getElementById('headerInstName').textContent = currentInstName().split(' - ')[0];
+  speakWelcome();
+  loadStaff();
+  getLocation();
+  startCamera('pendVideo');
+}
+document.getElementById('regInstName').textContent = currentInstName();
+document.getElementById('headerInstName').textContent = currentInstName().split(' - ')[0];
+loadModels();
+tickClock();
+setInterval(tickClock, 1000);
+if (!API_URL) { document.getElementById('setupCard').style.display = 'block'; }
+else { boot(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SDM KARTAVYA - Admin</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="theme-color" content="#16263e">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16263e; --ink-soft:#374863;
+    --teal:#0e6e64; --teal-deep:#0a5750;
+    --gold:#b8862c; --gold-deep:#8f6a20;
+    --bg:#eaf2fb; --card:#ffffff; --line:#e1e5df;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(180deg,#dfeaf9 0%,#f8fafc 45%,#fbf3de 100%);color:var(--ink);font-family:'Inter',Arial,sans-serif;min-height:100vh;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;}
+  .flagbar{height:4px;background:linear-gradient(90deg,#ff9933,#f4f2ea 50%,#128a4d);}
+  header{background:var(--ink);color:#fff;padding:16px 20px;}
+  .headerRow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .headerLeft{display:flex;align-items:center;gap:13px;min-width:0;}
+  .logo-circle{width:44px;height:44px;border-radius:50%;background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;color:var(--ink);}
+  header h1{margin:0;font-size:19px;font-weight:600;}
+  header p{margin:2px 0 0;font-size:12px;color:#c7d0de;}
+  .wrap{max-width:1150px;margin:0 auto;padding:16px;}
+
+  #pinGate{max-width:340px;margin:60px auto;background:var(--card);border-radius:14px;padding:26px;box-shadow:0 8px 24px rgba(22,38,62,.08);text-align:center;}
+  #pinGate h2{margin:0 0 6px;font-size:19px;}
+  #pinGate p{font-size:12.5px;color:var(--ink-soft);margin:0 0 16px;}
+  #pinGate input{width:100%;padding:12px;font-size:18px;text-align:center;letter-spacing:4px;border:1px solid #d4dad2;border-radius:9px;}
+  #pinGate button{margin-top:12px;width:100%;padding:11px;border:none;border-radius:9px;background:var(--teal);color:#fff;font-weight:700;font-size:14px;cursor:pointer;}
+  #pinGate .err{color:#b0392b;font-size:12.5px;margin-top:8px;min-height:16px;}
+  #appBody{display:none;}
+
+  .filters{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(22,38,62,.06),0 8px 24px rgba(22,38,62,.05);
+            display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:16px;border:1px solid var(--line);}
+  .filters div{display:flex;flex-direction:column;font-size:11.5px;font-weight:600;color:var(--ink-soft);}
+  input,select{padding:9px;border:1px solid #d4dad2;border-radius:7px;font-size:13px;margin-top:4px;font-family:inherit;}
+  button{padding:9px 16px;border:none;border-radius:7px;background:var(--ink);color:#fff;font-weight:700;cursor:pointer;font-size:13px;font-family:inherit;}
+  button.secondary{background:var(--teal);}
+  button.warn{background:var(--gold-deep);}
+  button.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
+
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(22,38,62,.06),0 8px 24px rgba(22,38,62,.05);}
+  th,td{padding:8px 10px;font-size:12px;text-align:left;border-bottom:1px solid #f0f1ec;}
+  th{background:var(--ink);color:#fff;font-weight:600;}
+  tr:nth-child(even){background:#fafbf9;}
+  .pill{display:inline-block;padding:2px 9px;border-radius:10px;font-size:10.5px;font-weight:700;}
+  .pill.P{background:#e7f5f1;color:var(--teal-deep);}
+  .pill.L{background:#fbf1de;color:var(--gold-deep);}
+  .pill.A{background:#fbeae7;color:#b0392b;}
+  .pill.LV{background:#eef0ff;color:#5b3fc0;}
+  .pill.H{background:#fdeee0;color:#c0692b;}
+  .pill.WO{background:#eee;color:#777;}
+  .pill.Checked{background:#eaf1ff;color:#2a4568;}
+  .pill.REJECTED{background:#fbeae7;color:#b0392b;}
+  .legend{font-size:11px;color:#7a8579;margin-bottom:10px;}
+  .legend span{margin-right:10px;}
+  #printHead{display:none;}
+  @media print { header,.filters,.toggle,.actions,.legend,.tabs{display:none;} #printHead{display:block;text-align:center;margin-bottom:10px;} body{background:#fff;} }
+  .toggle{text-align:center;margin:14px 0;}
+  .toggle a{font-size:12px;color:var(--ink-soft);cursor:pointer;text-decoration:underline;}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .modal{position:fixed;inset:0;background:rgba(22,38,62,.45);display:none;align-items:center;justify-content:center;z-index:50;}
+  .modal.show{display:flex;}
+  .modal-card{background:#fff;border-radius:14px;padding:22px;width:90%;max-width:380px;}
+  .modal-card h3{margin-top:0;}
+  .timerow{display:flex;gap:10px;}
+  .timerow>div{flex:1;}
+  .tabs{display:flex;gap:6px;margin-bottom:14px;}
+  .tabbtn{padding:8px 14px;border-radius:8px;background:#fff;border:1px solid var(--line);color:var(--ink-soft);font-weight:700;font-size:12.5px;cursor:pointer;}
+  .tabbtn.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .staffTable button{padding:5px 10px;font-size:11.5px;}
+</style>
+</head>
+<body>
+<div class="modal show" id="setupGate" style="z-index:80;">
+  <div class="modal-card" style="max-width:380px;">
+    <h3 style="margin-top:0;">Connect to SDM KARTAVYA backend</h3>
+    <div style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;">Paste the Apps Script Web App URL from your deployment (ends in <code>/exec</code>). Stored only on this device.</div>
+    <input id="apiUrlInput" style="width:100%;" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+    <button class="secondary" style="width:100%;margin-top:12px;" onclick="saveApiUrl()">Save &amp; Continue</button>
+  </div>
+</div>
+<div id="pinGate">
+  <h2>Admin Access</h2>
+  <p>Enter the SDM KARTAVYA admin PIN to continue.</p>
+  <input type="password" id="pinInput" inputmode="numeric" maxlength="8" placeholder="****">
+  <button onclick="tryPin()">Unlock</button>
+  <div class="err" id="pinErr"></div>
+</div>
+
+<div id="appBody">
+<div class="flagbar"></div>
+<header>
+  <div class="headerRow">
+    <div class="headerLeft">
+      <div class="logo-circle"><img src="data:image/jpeg;base64,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" alt="SDM KARTAVYA logo" style="width:100%;height:100%;object-fit:cover;"></div>
+      <div>
+        <h1>SDM KARTAVYA - Admin</h1>
+        <p>Attendance Register - Honavar Campus Libraries</p>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+  <div id="printHead">
+    <h2 style="margin:0;" id="printTitle"></h2>
+    <div id="printRange"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tabbtn on" id="tabAttendance" onclick="switchTab('attendance')">Attendance</button>
+    <button class="tabbtn" id="tabStaff" onclick="switchTab('staff')">Staff & Timing</button>
+    <button class="tabbtn" id="tabMovement" onclick="switchTab('movement')">Movement Register</button>
+  </div>
+
+  <div class="filters">
+    <div>Institution
+      <select id="instSelect" onchange="onInstChange()">
+        <option value="Degree">S.D.M. Degree College</option>
+        <option value="PU">S.D.M. P.U. College</option>
+      </select>
+    </div>
+    <div>From<input type="date" id="fromDate"></div>
+    <div>To<input type="date" id="toDate"></div>
+    <button onclick="loadData()">Search</button>
+    <button class="secondary" onclick="loadToday()">Today</button>
+    <button class="ghost" onclick="window.print()">Print</button>
+  </div>
+
+  <div id="viewAttendance">
+    <div class="actions">
+      <button class="warn" onclick="openLeaveModal()">Mark Leave</button>
+      <button class="warn" onclick="openHolidayModal()">Add One-off Holiday</button>
+      <button class="ghost" onclick="downloadPdf()">Download PDF Report</button>
+      <button class="ghost" onclick="downloadGrid()">Download Monthly Grid</button>
+    </div>
+    <div class="legend">
+      <span class="pill P">P</span>Present
+      <span class="pill L">L</span>Late
+      <span class="pill A">A</span>Absent
+      <span class="pill LV">LV</span>Leave
+      <span class="pill H">H</span>Holiday
+      <span class="pill WO">WO</span>Weekly Off (Sunday)
+    </div>
+    <table id="tbl">
+      <thead><tr><th>Date</th><th>Day</th><th>Staff</th><th>Designation</th><th>In</th><th>Out</th><th>Status In</th><th>Status Out</th><th>Remarks</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div id="viewStaff" style="display:none;">
+    <div class="actions">
+      <button class="secondary" onclick="openStaffModal()">+ Add Staff (with timing)</button>
+    </div>
+    <table class="staffTable">
+      <thead><tr><th>Name</th><th>Designation</th><th>Phone</th><th>Weekday</th><th>Saturday</th><th>Face on file</th><th></th></tr></thead>
+      <tbody id="staffTbody"></tbody>
+    </table>
+  </div>
+
+  <div id="viewMovement" style="display:none;">
+    <table>
+      <thead><tr><th>Date</th><th>Staff</th><th>Time Out</th><th>Purpose</th><th>Destination</th><th>Time In</th><th>Duration (min)</th><th>Remarks</th></tr></thead>
+      <tbody id="movTbody"></tbody>
+    </table>
+  </div>
+
+  <div class="toggle"><a href="index.html">&larr; back to check-in</a></div>
+</div>
+
+<div class="modal" id="leaveModal">
+  <div class="modal-card">
+    <h3>Mark Leave</h3>
+    <label style="font-size:12px;font-weight:600;">Staff</label>
+    <select id="leaveStaff" style="width:100%;margin-top:4px;"></select>
+    <label style="font-size:12px;font-weight:600;margin-top:10px;display:block;">Date</label>
+    <input type="date" id="leaveDate" style="width:100%;">
+    <label style="font-size:12px;font-weight:600;margin-top:10px;display:block;">Remarks (optional)</label>
+    <input id="leaveRemarks" style="width:100%;" placeholder="e.g. Casual leave">
+    <div style="display:flex;gap:10px;margin-top:14px;">
+      <button class="ghost" onclick="closeModal('leaveModal')">Cancel</button>
+      <button class="secondary" onclick="submitLeave()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="holidayModal">
+  <div class="modal-card">
+    <h3>Add One-off Holiday</h3>
+    <label style="font-size:12px;font-weight:600;">Date</label>
+    <input type="date" id="holidayDate" style="width:100%;margin-top:4px;">
+    <label style="font-size:12px;font-weight:600;margin-top:10px;display:block;">Description</label>
+    <input id="holidayDesc" style="width:100%;" placeholder="e.g. Independence Day">
+    <div style="font-size:11px;color:#7a8579;margin-top:6px;">Applies to both institutions.</div>
+    <div style="display:flex;gap:10px;margin-top:14px;">
+      <button class="ghost" onclick="closeModal('holidayModal')">Cancel</button>
+      <button class="secondary" onclick="submitHoliday()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="staffModal">
+  <div class="modal-card" style="max-width:400px;">
+    <h3>Add Staff</h3>
+    <label style="font-size:12px;font-weight:600;">Full Name</label>
+    <input id="stName" style="width:100%;">
+    <label style="font-size:12px;font-weight:600;margin-top:8px;display:block;">Designation</label>
+    <input id="stDesignation" style="width:100%;">
+    <label style="font-size:12px;font-weight:600;margin-top:8px;display:block;">Phone</label>
+    <input id="stPhone" style="width:100%;">
+    <label style="font-size:12px;font-weight:600;margin-top:10px;display:block;">Weekday (In / Out)</label>
+    <div class="timerow"><input type="time" id="stWeekdayIn" value="09:30"><input type="time" id="stWeekdayOut" value="17:30"></div>
+    <label style="font-size:12px;font-weight:600;margin-top:10px;display:block;">Saturday (In / Out)</label>
+    <div class="timerow"><input type="time" id="stSaturdayIn" value="09:30"><input type="time" id="stSaturdayOut" value="13:00"></div>
+    <div style="font-size:11px;color:#7a8579;margin-top:8px;">This creates the staff record without a face. The staff member completes their own face capture from the check-in screen the first time they register in person.</div>
+    <div style="display:flex;gap:10px;margin-top:14px;">
+      <button class="ghost" onclick="closeModal('staffModal')">Cancel</button>
+      <button class="secondary" onclick="submitStaffAdd()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="timingModal">
+  <div class="modal-card" style="max-width:380px;">
+    <h3>Edit Timing</h3>
+    <div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:8px;" id="timingStaffName"></div>
+    <label style="font-size:12px;font-weight:600;">Weekday (In / Out)</label>
+    <div class="timerow"><input type="time" id="tmWeekdayIn"><input type="time" id="tmWeekdayOut"></div>
+    <label style="font-size:12px;font-weight:600;margin-top:10px;display:block;">Saturday (In / Out)</label>
+    <div class="timerow"><input type="time" id="tmSaturdayIn"><input type="time" id="tmSaturdayOut"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;">
+      <button class="ghost" onclick="closeModal('timingModal')">Cancel</button>
+      <button class="secondary" onclick="submitTimingEdit()">Save</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+let API_URL = localStorage.getItem('sdm_kartavya_api_url') || '';
+function saveApiUrl() {
+  const v = document.getElementById('apiUrlInput').value.trim();
+  if (!v.startsWith('https://script.google.com/')) { alert('Paste the full Apps Script web app URL (ends in /exec).'); return; }
+  localStorage.setItem('sdm_kartavya_api_url', v); API_URL = v;
+  document.getElementById('setupGate').classList.remove('show');
+}
+async function apiPost(body) {
+  const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Server error');
+  return json.data;
+}
+if (API_URL) document.getElementById('setupGate').classList.remove('show');
+document.getElementById('apiUrlInput').value = API_URL;
+
+function tryPin() {
+  const pin = document.getElementById('pinInput').value;
+  apiPost({ action: 'checkAdminPin', pin }).then(ok => {
+    if (ok) { document.getElementById('pinGate').style.display = 'none'; document.getElementById('appBody').style.display = 'block'; loadToday(); }
+    else document.getElementById('pinErr').textContent = 'Incorrect PIN.';
+  }).catch(err => document.getElementById('pinErr').textContent = err.message);
+}
+document.getElementById('pinInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryPin(); });
+
+function switchTab(name) {
+  ['attendance','staff','movement'].forEach(t => {
+    document.getElementById('view' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = (t===name) ? 'block' : 'none';
+    document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('on', t===name);
+  });
+  if (name === 'staff') loadStaffTab();
+  if (name === 'movement') loadMovementTab();
+}
+
+function pillClass(status) {
+  if (!status) return '';
+  if (status.indexOf('Not') === 0 || status.indexOf('REJECTED') === 0) return 'REJECTED';
+  if (status === 'Checked Out') return 'Checked';
+  return status;
+}
+function pill(status) { return status ? `<span class="pill ${pillClass(status)}">${status}</span>` : '-'; }
+
+function instName() { return document.getElementById('instSelect').selectedOptions[0].text; }
+function onInstChange() { loadData(); if (document.getElementById('viewStaff').style.display!=='none') loadStaffTab(); if (document.getElementById('viewMovement').style.display!=='none') loadMovementTab(); }
+
+function render(rows) {
+  document.getElementById('tbody').innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.Date}</td><td>${r.Day || ''}</td><td>${r.Name}</td><td>${r.Designation || ''}</td>
+      <td>${r.TimeIn || '-'}</td><td>${r.TimeOut || '-'}</td>
+      <td>${pill(r.StatusIn)}</td><td>${pill(r.StatusOut)}</td><td>${r.Remarks || ''}</td>
+    </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:#999;">No records found.</td></tr>';
+}
+
+function loadData() {
+  const from = document.getElementById('fromDate').value, to = document.getElementById('toDate').value;
+  document.getElementById('printTitle').textContent = 'SDM KARTAVYA - ' + instName();
+  document.getElementById('printRange').textContent = `${from} to ${to}`;
+  apiPost({ action: 'getAttendanceMatrix', institution: document.getElementById('instSelect').value, fromDate: from, toDate: to })
+    .then(render).catch(err => alert(err.message));
+}
+function loadToday() {
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('fromDate').value = today; document.getElementById('toDate').value = today;
+  loadData();
+}
+
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function openLeaveModal() {
+  apiPost({ action: 'getStaffList', institution: document.getElementById('instSelect').value }).then(list => {
+    document.getElementById('leaveStaff').innerHTML = list.filter(s=>s.active).map(s => `<option value="${s.staffId}|${s.name}|${s.designation}">${s.name}</option>`).join('');
+  }).catch(err => alert(err.message));
+  document.getElementById('leaveDate').value = new Date().toISOString().slice(0,10);
+  openModal('leaveModal');
+}
+function submitLeave() {
+  const [staffId, name, designation] = document.getElementById('leaveStaff').value.split('|');
+  const date = document.getElementById('leaveDate').value;
+  const remarks = document.getElementById('leaveRemarks').value;
+  apiPost({ action: 'markLeave', data: { institution: document.getElementById('instSelect').value, staffId, name, designation, date, remarks } })
+    .then(() => { closeModal('leaveModal'); loadData(); }).catch(err => alert(err.message));
+}
+
+function openHolidayModal() {
+  document.getElementById('holidayDate').value = new Date().toISOString().slice(0,10);
+  openModal('holidayModal');
+}
+function submitHoliday() {
+  const date = document.getElementById('holidayDate').value;
+  const desc = document.getElementById('holidayDesc').value;
+  apiPost({ action: 'addHoliday', date, description: desc })
+    .then(() => { closeModal('holidayModal'); loadData(); }).catch(err => alert(err.message));
+}
+
+let staffCache = [];
+function loadStaffTab() {
+  apiPost({ action: 'getStaffList', institution: document.getElementById('instSelect').value }).then(list => {
+    staffCache = list;
+    document.getElementById('staffTbody').innerHTML = list.map(s => `
+      <tr>
+        <td>${s.name}</td><td>${s.designation||''}</td><td>${s.phone||''}</td>
+        <td>${s.weekdayIn||'-'} \u2192 ${s.weekdayOut||'-'}</td>
+        <td>${s.saturdayIn||'-'} \u2192 ${s.saturdayOut||'-'}</td>
+        <td>${s.hasFace ? 'yes' : '-'}</td>
+        <td><button class="ghost" onclick="openTimingModal('${s.staffId}')">Edit timing</button></td>
+      </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:#999;">No staff yet.</td></tr>';
+  }).catch(err => alert(err.message));
+}
+function openStaffModal() { openModal('staffModal'); }
+function submitStaffAdd() {
+  const data = {
+    institution: document.getElementById('instSelect').value,
+    name: document.getElementById('stName').value.trim(),
+    designation: document.getElementById('stDesignation').value.trim(),
+    phone: document.getElementById('stPhone').value.trim(),
+    weekdayIn: document.getElementById('stWeekdayIn').value, weekdayOut: document.getElementById('stWeekdayOut').value,
+    saturdayIn: document.getElementById('stSaturdayIn').value, saturdayOut: document.getElementById('stSaturdayOut').value
+  };
+  if (!data.name) return alert('Enter the staff name.');
+  apiPost({ action: 'preRegisterStaff', data })
+    .then(() => { closeModal('staffModal'); loadStaffTab(); }).catch(err => alert(err.message));
+}
+function openTimingModal(staffId) {
+  const s = staffCache.find(x => x.staffId === staffId);
+  if (!s) return;
+  document.getElementById('timingStaffName').textContent = s.name + (s.designation ? ' - ' + s.designation : '');
+  document.getElementById('tmWeekdayIn').value = s.weekdayIn || '';
+  document.getElementById('tmWeekdayOut').value = s.weekdayOut || '';
+  document.getElementById('tmSaturdayIn').value = s.saturdayIn || '';
+  document.getElementById('tmSaturdayOut').value = s.saturdayOut || '';
+  document.getElementById('timingModal').dataset.staffId = staffId;
+  openModal('timingModal');
+}
+function submitTimingEdit() {
+  const staffId = document.getElementById('timingModal').dataset.staffId;
+  apiPost({ action: 'updateStaffTiming', data: {
+      institution: document.getElementById('instSelect').value, staffId,
+      weekdayIn: document.getElementById('tmWeekdayIn').value, weekdayOut: document.getElementById('tmWeekdayOut').value,
+      saturdayIn: document.getElementById('tmSaturdayIn').value, saturdayOut: document.getElementById('tmSaturdayOut').value
+    } })
+    .then(() => { closeModal('timingModal'); loadStaffTab(); }).catch(err => alert(err.message));
+}
+
+function loadMovementTab() {
+  const from = document.getElementById('fromDate').value, to = document.getElementById('toDate').value;
+  apiPost({ action: 'getMovementLog', institution: document.getElementById('instSelect').value, fromDate: from, toDate: to }).then(rows => {
+    document.getElementById('movTbody').innerHTML = rows.map(r => `
+      <tr><td>${r.Date}</td><td>${r.Name}</td><td>${r.TimeOut}</td><td>${r.Purpose||''}</td><td>${r.Destination||''}</td><td>${r.TimeIn||'-'}</td><td>${r.DurationMin||''}</td><td>${r.Remarks||''}</td></tr>
+    `).join('') || '<tr><td colspan="8" style="text-align:center;color:#999;">No movement records.</td></tr>';
+  }).catch(err => alert(err.message));
+}
+
+function b64ToBlobUrl(base64, filename) {
+  const bytes = atob(base64); const arr = new Uint8Array(bytes.length);
+  for (let i=0;i<bytes.length;i++) arr[i] = bytes.charCodeAt(i);
+  const blob = new Blob([arr], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+}
+function downloadPdf() {
+  const from = document.getElementById('fromDate').value, to = document.getElementById('toDate').value;
+  apiPost({ action: 'generatePdfReport', institution: document.getElementById('instSelect').value, fromDate: from, toDate: to })
+    .then(res => b64ToBlobUrl(res.base64, res.filename)).catch(err => alert(err.message));
+}
+function downloadGrid() {
+  const from = new Date(document.getElementById('fromDate').value || new Date());
+  apiPost({ action: 'generateMonthlyGridReport', institution: document.getElementById('instSelect').value, year: from.getFullYear(), month: from.getMonth()+1 })
+    .then(res => b64ToBlobUrl(res.base64, res.filename)).catch(err => alert(err.message));
+}
+</script>
+</body>
+</html>
