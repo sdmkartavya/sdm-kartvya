@@ -57,7 +57,7 @@
   .cameraBox.show{display:block;}
   video,canvas{width:100%;border-radius:0;background:#0d1420;aspect-ratio:3/4;object-fit:cover;display:block;}
   .faceGuide{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);
-    width:60%;height:42%;border:3px dashed rgba(255,255,255,.85);border-radius:50%;pointer-events:none;}
+    width:60%;height:42%;border:3px dashed rgba(255,255,255,.85);border-radius:50%;pointer-events:none;box-shadow:0 0 0 2000px rgba(0,0,0,.6);}
   .successOverlay{position:absolute;inset:0;background:rgba(14,110,100,.92);border-radius:11px;
     display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;}
   .successOverlay.show{display:flex;}
@@ -723,7 +723,7 @@ async function captureAndVerify(type, staff) {
   }
   setStep('stepFace', 'done');
   setStep('stepDone', 'active');
-  speak('Face captured successfully.');
+  speak('Face detected. Verifying match.');
   try {
     const refDescriptors = await callServer('getStaffDescriptor', currentInst(), staff.staffId);
     const faceDistance = bestFaceDistance(liveDescriptor, refDescriptors);
@@ -1007,11 +1007,11 @@ function boot() {
 }
 document.getElementById('regInstName').textContent = currentInstName();
 document.getElementById('headerInstName').textContent = currentInstName().split(' - ')[0];
-loadModels();
 tickClock();
 setInterval(tickClock, 1000);
 if (!API_URL) { document.getElementById('setupCard').style.display = 'block'; }
 else { boot(); }
+loadModels();
 </script>
 </body>
 </html>
