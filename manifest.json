@@ -1,0 +1,13 @@
+{
+  "name": "SDM KARTAVYA - Staff Attendance",
+  "short_name": "SDM_KARTAVYA",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eaf2fb",
+  "theme_color": "#16263e",
+  "icons": [
+    { "src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon.png", "sizes": "192x192", "type": "image/png" }
+  ]
+}
