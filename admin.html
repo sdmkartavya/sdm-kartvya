@@ -274,7 +274,11 @@
 
 <script src="face-api.min.js"></script>
 <script>
-let API_URL = localStorage.getItem('sdm_kartavya_api_url') || '';
+// Keep this in sync with the same constant in index.html - same deployed
+// Apps Script Web App URL, pasted once, works on every device forever.
+const DEFAULT_API_URL = 'https://script.google.com/macros/library/d/1wsa2R4eUyOKuYbI-AkWpVbIvGpkYEMvjDRBOAU9e45GbEYhMRvlg4Gd_/22';
+let API_URL = localStorage.getItem('sdm_kartavya_api_url') || DEFAULT_API_URL || '';
+if (API_URL && !localStorage.getItem('sdm_kartavya_api_url')) localStorage.setItem('sdm_kartavya_api_url', API_URL);
 function saveApiUrl() {
   const v = document.getElementById('apiUrlInput').value.trim();
   if (!v.startsWith('https://script.google.com/')) { alert('Paste the full Apps Script web app URL (ends in /exec).'); return; }
