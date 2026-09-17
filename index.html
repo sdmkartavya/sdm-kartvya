@@ -372,10 +372,17 @@ const MODEL_URLS = [
   'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights',
   'https://unpkg.com/face-api.js@0.22.2/weights'
 ];
+// Paste your deployed Apps Script Web App URL here ONCE (ends in /exec) and
+// commit this file to GitHub. After that, every device that opens this page
+// works immediately - no "Connect to backend" screen, nothing to paste, and
+// nothing lost if a browser's storage is cleared. Leave it '' only if you
+// deploy a fresh backend for every device (not recommended).
+const DEFAULT_API_URL = '';
+
 let staffList = [];
 let currentPos = null;
 let attemptsLeft = 5;
-let API_URL = localStorage.getItem('sdm_kartavya_api_url') || '';
+let API_URL = localStorage.getItem('sdm_kartavya_api_url') || DEFAULT_API_URL || 'https://script.google.com/macros/library/d/1wsa2R4eUyOKuYbI-AkWpVbIvGpkYEMvjDRBOAU9e45GbEYhMRvlg4Gd_/22';
 
 function saveApiUrl() {
   const v = document.getElementById('apiUrlInput').value.trim();
