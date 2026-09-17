@@ -166,6 +166,7 @@
         <div class="successMsg" id="successMsg"></div>
       </div>
     </div>
+    <button class="btn-reg" id="btnCapture" style="display:none;margin-top:10px;">Capture</button>
     <canvas id="canvas" style="display:none;"></canvas>
 
     <div class="btnrow">
@@ -377,12 +378,12 @@ const MODEL_URLS = [
 // works immediately - no "Connect to backend" screen, nothing to paste, and
 // nothing lost if a browser's storage is cleared. Leave it '' only if you
 // deploy a fresh backend for every device (not recommended).
-const DEFAULT_API_URL = '';
+const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbwHPOCSCs_GxWzqTw4olfpGHRnuZ6t4XFdkTlVgtxfWpP5PkkLKsDPIr8pmKdBovZ-w/exec';
 
 let staffList = [];
 let currentPos = null;
 let attemptsLeft = 5;
-let API_URL = localStorage.getItem('sdm_kartavya_api_url') || DEFAULT_API_URL || 'https://script.google.com/macros/library/d/1wsa2R4eUyOKuYbI-AkWpVbIvGpkYEMvjDRBOAU9e45GbEYhMRvlg4Gd_/22';
+let API_URL = localStorage.getItem('sdm_kartavya_api_url') || DEFAULT_API_URL || '';
 
 function saveApiUrl() {
   const v = document.getElementById('apiUrlInput').value.trim();
@@ -495,7 +496,7 @@ function setStep(id, state) {
   if (state) el.classList.add(state);
 }
 function showCamera() { document.getElementById('cameraBox').classList.add('show'); }
-function hideCamera() { document.getElementById('cameraBox').classList.remove('show'); }
+function hideCamera() { document.getElementById('cameraBox').classList.remove('show'); document.getElementById('btnCapture').style.display = 'none'; }
 
 function getLocation() {
   setStep('stepLoc', 'active');
@@ -670,6 +671,19 @@ async function getAccurateLocation() {
   return coords;
 }
 
+// Shows the Capture button and waits for the staff member to press it -
+// used both the first time the camera opens and on a retry - so nothing is
+// captured or compared until they've actually lined their face up and say
+// they're ready, instead of the app grabbing a frame the instant the
+// camera turns on.
+function waitForCaptureClick() {
+  return new Promise(resolve => {
+    const btn = document.getElementById('btnCapture');
+    btn.style.display = 'inline-block';
+    btn.onclick = () => { btn.style.display = 'none'; resolve(); };
+  });
+}
+
 async function submitAttendance(type) {
   const staffId = document.getElementById('staffSelect').value;
   const staff = staffList.find(s => s.staffId === staffId);
@@ -677,6 +691,9 @@ async function submitAttendance(type) {
 
   const vElCheck = document.getElementById('video');
   if (vElCheck.srcObject && currentPos) {
+    setStatus('statusBox','info','Line up your face in the oval, then press Capture.');
+    speak('Line up your face and press capture.');
+    await waitForCaptureClick();
     return await captureAndVerify(type, staff);
   }
 
@@ -714,6 +731,9 @@ async function submitAttendance(type) {
     return setStatus('statusBox','bad','Camera permission denied. Allow camera access to mark attendance.');
   }
 
+  setStatus('statusBox','info','Line up your face in the oval, then press Capture.');
+  speak('Line up your face and press capture.');
+  await waitForCaptureClick();
   return await captureAndVerify(type, staff);
 }
 
@@ -740,12 +760,13 @@ async function captureAndVerify(type, staff) {
       institution: currentInst(), staffId: staff.staffId, name: staff.name, designation: staff.designation,
       lat: currentPos.latitude, lng: currentPos.longitude, photoBase64, faceDistance, type
     });
-    setStatus('statusBox', res.accepted ? 'ok' : 'bad', `${res.status} - ${res.time} on ${res.date} (${res.distance}m from campus)`);
+    const noteAuto = res.autoCorrected ? ' (no check-in was found today, so this was recorded as your check-in instead)' : '';
+    setStatus('statusBox', res.accepted ? 'ok' : 'bad', `${res.status} - ${res.time} on ${res.date} (${res.distance}m from campus)${noteAuto}`);
     setStep('stepDone', res.accepted ? 'done' : null);
     if (res.accepted) {
-      document.getElementById('successMsg').textContent = `${res.status} - ${res.time}`;
+      document.getElementById('successMsg').textContent = `${res.status} - ${res.time}` + (res.autoCorrected ? ' (recorded as Check-In)' : '');
       document.getElementById('successOverlay').classList.add('show');
-      speak('Attendance taken successfully. Thank you. Good day.');
+      speak(res.autoCorrected ? 'No check-in was found, so this was recorded as your check-in instead.' : 'Attendance taken successfully. Thank you. Good day.');
       resetAttempts();
       await new Promise(r => setTimeout(r, 1800));
       document.getElementById('successOverlay').classList.remove('show');
