@@ -159,7 +159,9 @@
   <div id="viewStaff" style="display:none;">
     <div class="actions">
       <button class="secondary" onclick="openStaffModal()">+ Add Staff (with timing)</button>
+      <button class="ghost" onclick="runMonthlyArchiveNow()">Run Monthly Backup Now</button>
     </div>
+    <div class="small" id="archiveStatus" style="margin-top:6px;"></div>
     <table class="staffTable">
       <thead><tr><th>Name</th><th>Designation</th><th>Phone</th><th>Weekday</th><th>Saturday</th><th>Face on file</th><th></th></tr></thead>
       <tbody id="staffTbody"></tbody>
@@ -535,6 +537,26 @@ function submitPhotoSave() {
       setTimeout(() => closeModal('photoModal'), 800);
     })
     .catch(err => { statusEl.className = 'status bad'; statusEl.textContent = err.message; });
+}
+
+// Moves attendance/movement rows older than the live retention window
+// into the "SDM KARTAVYA Backup" Drive folder - raw data plus printable
+// PDFs. Safe to press any time; it does nothing if nothing is old enough
+// yet. This also happens automatically on the 1st of every month once
+// installMonthlyArchiveTrigger() has been run once from the Apps Script
+// editor - this button is for running it on demand in between.
+function runMonthlyArchiveNow() {
+  if (!confirm('This moves attendance older than the live retention window out of the live sheets into the Backup folder (as a data copy plus PDFs), to keep the app fast. Continue?')) return;
+  document.getElementById('archiveStatus').textContent = 'Running backup - this can take a little while the first time...';
+  apiPost({ action: 'runMonthlyArchive' }).then(summary => {
+    const lines = Object.keys(summary.branches).map(k => {
+      const b = summary.branches[k];
+      return b.months.length ? `${k}: archived ${b.archivedRows} rows (${b.months.join(', ')})` : `${k}: nothing old enough to archive yet`;
+    });
+    document.getElementById('archiveStatus').textContent = lines.join(' | ');
+  }).catch(err => {
+    document.getElementById('archiveStatus').textContent = 'Backup failed: ' + err.message;
+  });
 }
 
 function loadMovementTab() {
