@@ -29,6 +29,9 @@
   .headerRight{text-align:right;flex-shrink:0;margin-left:auto;}
   .hrInst{color:#e7d9b8;font-size:12px;font-weight:700;max-width:220px;}
   .hrClock{color:#c7d0de;font-size:11px;margin-top:2px;}
+  .voiceToggle{margin-top:6px;padding:5px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.08);color:#fff;font-size:10.5px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .voiceToggle.muted{background:rgba(176,57,43,.35);border-color:rgba(176,57,43,.6);}
   .logo-circle{width:46px;height:46px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(255,255,255,.55);background:#fff;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;color:var(--ink);}
   .headtext{min-width:0;}
   header h1{margin:0;font-size:19px;font-weight:600;letter-spacing:.2px;}
@@ -56,6 +59,17 @@
   .cameraBox{position:relative;display:none;margin-top:12px;}
   .cameraBox.show{display:block;}
   video,canvas{width:100%;border-radius:0;background:#0d1420;aspect-ratio:3/4;object-fit:cover;display:block;}
+  /* Cropped, zoomed wrapper for the check-in camera only (registration's
+     own camera below is untouched): the raw feed is scaled up and the
+     overflow hidden, so the face fills the oval guide the way a proper
+     ID-check camera does, instead of showing a lot of background/shoulders. */
+  .cameraVideoWrap{position:relative;overflow:hidden;aspect-ratio:3/4;background:#0d1420;border-radius:0;}
+  .cameraVideoWrap video{width:100%;height:100%;margin-top:0;object-fit:cover;display:block;transform:scale(1.35);transform-origin:50% 42%;}
+  /* High-contrast bar pinned to the top of the camera itself, so the
+     instruction/status is never lost against a dark or busy background -
+     it always sits on its own solid dark strip. */
+  .cameraStatusBar{position:absolute;top:0;left:0;right:0;z-index:5;background:rgba(0,0,0,.72);
+    color:#fff;font-weight:700;font-size:12.5px;line-height:1.35;text-align:center;padding:10px 14px;}
   .faceGuide{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);
     width:84%;height:76%;border:4px dashed rgba(255,255,255,.9);border-radius:50%;pointer-events:none;box-shadow:0 0 0 2000px rgba(0,0,0,.6);}
   .successOverlay{position:absolute;inset:0;background:rgba(14,110,100,.92);border-radius:11px;
@@ -131,6 +145,7 @@
     <div class="headerRight">
       <div class="hrInst" id="headerInstName">S.D.M. Degree College</div>
       <div class="hrClock" id="clockLine">-</div>
+      <button class="voiceToggle" id="voiceToggle" onclick="toggleVoice()" title="Turn voice announcements on or off">&#128266; Voice On</button>
     </div>
   </div>
 </header>
@@ -159,8 +174,9 @@
     <div class="locrow"><span class="dot" id="locDot"></span><span id="locStatus">Location is checked when you press Check In or Check Out.</span></div>
 
     <div class="cameraBox" id="cameraBox">
-      <video id="video" autoplay muted playsinline></video>
+      <div class="cameraVideoWrap"><video id="video" autoplay muted playsinline></video></div>
       <div class="faceGuide"></div>
+      <div class="cameraStatusBar" id="cameraStatus">Getting ready...</div>
       <div class="successOverlay" id="successOverlay">
         <div class="checkCircle">&#10003;</div>
         <div class="successMsg" id="successMsg"></div>
@@ -434,8 +450,28 @@ const API_FN = {
   submitGrievance: apiSubmitGrievance
 };
 function callServer(fnName, ...args) { return API_FN[fnName](...args); }
+// Voice is ON by default (as before), but some offices need to stay quiet,
+// so it's remembered per-device via localStorage and can be muted from the
+// button in the header at any time - speak() just becomes a no-op while muted.
+function isVoiceMuted() {
+  try { return localStorage.getItem('sdm_kartavya_voice_muted') === '1'; } catch (e) { return false; }
+}
+function toggleVoice() {
+  const muted = !isVoiceMuted();
+  try { localStorage.setItem('sdm_kartavya_voice_muted', muted ? '1' : '0'); } catch (e) {}
+  if (muted) { try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {} }
+  updateVoiceToggleUI();
+}
+function updateVoiceToggleUI() {
+  const btn = document.getElementById('voiceToggle');
+  if (!btn) return;
+  const muted = isVoiceMuted();
+  btn.innerHTML = muted ? '&#128263; Voice Off' : '&#128266; Voice On';
+  btn.classList.toggle('muted', muted);
+}
 function speak(text) {
   try {
+    if (isVoiceMuted()) return;
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -588,6 +624,14 @@ async function getDescriptor(canvas) {
   return det ? Array.from(det.descriptor) : null;
 }
 function setStatus(id, cls, msg) { const el = document.getElementById(id); el.className = 'status ' + cls; el.textContent = msg; }
+// Mirrors the current step's message onto a solid, high-contrast bar
+// pinned to the TOP of the live camera view itself, not just the status
+// box further down the page - always visible over the video, whatever the
+// lighting behind it.
+function setCameraStatus(msg) {
+  const el = document.getElementById('cameraStatus');
+  if (el) el.textContent = msg;
+}
 
 function formatOverlayTime(d) {
   const day = d.toLocaleDateString('en-IN', { weekday: 'long', timeZone: 'Asia/Kolkata' });
@@ -706,6 +750,7 @@ async function submitAttendance(type) {
   const vElCheck = document.getElementById('video');
   if (vElCheck.srcObject && currentPos) {
     setStatus('statusBox','info','Line up your face in the oval, then press Capture.');
+    setCameraStatus('Line up your face in the oval, then press Capture below.');
     speak('Line up your face and press capture.');
     await waitForCaptureClick();
     return await captureAndVerify(type, staff);
@@ -746,34 +791,81 @@ async function submitAttendance(type) {
   }
 
   setStatus('statusBox','info','Line up your face in the oval, then press Capture.');
+  setCameraStatus('Line up your face in the oval, then press Capture below.');
   speak('Line up your face and press capture.');
   await waitForCaptureClick();
   return await captureAndVerify(type, staff);
 }
 
+
+// Wraps a slow server call with (a) a visible "still working... (Ns)" tick
+// every 3 seconds instead of a silent frozen screen, and (b) a hard
+// timeout that fails clearly instead of hanging forever - this is what was
+// making a slow/cold Apps Script response feel like the app was frozen
+// with no way to tell if it was still doing anything.
+function withProgress(promiseFactory, label, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    let settled = false;
+    const tick = setInterval(() => {
+      if (settled) return;
+      const secs = Math.round((Date.now() - started) / 1000);
+      setCameraStatus(label + ' - still working (' + secs + 's)...');
+    }, 3000);
+    const to = setTimeout(() => {
+      if (settled) return;
+      settled = true; clearInterval(tick);
+      reject(new Error('This is taking longer than expected - check your internet connection and press the button to try again.'));
+    }, timeoutMs);
+    promiseFactory().then(res => {
+      if (settled) return;
+      settled = true; clearInterval(tick); clearTimeout(to);
+      resolve(res);
+    }).catch(err => {
+      if (settled) return;
+      settled = true; clearInterval(tick); clearTimeout(to);
+      reject(err);
+    });
+  });
+}
+
 async function captureAndVerify(type, staff) {
   const vEl = document.getElementById('video');
   setStatus('statusBox','info','Verifying face...');
+  setCameraStatus('Verifying face...');
   speak('Capture face.');
   const canvas = captureFrame('video','canvas');
   const liveDescriptor = await getDescriptor(canvas);
   if (!liveDescriptor) {
     attemptsLeft = Math.max(0, attemptsLeft - 1);
     speak('No face detected. You have ' + attemptsLeft + ' chances remaining.');
+    setCameraStatus('No face detected - line up your face and press Capture again.');
     return setStatus('statusBox','bad','No face detected - line up your face in the oval and press the button again.');
   }
   setStep('stepFace', 'done');
   setStep('stepDone', 'active');
   speak('Face detected. Verifying match.');
   try {
-    const refDescriptors = await callServer('getStaffDescriptor', currentInst(), staff.staffId);
+    setCameraStatus('Checking your face against your record...');
+    const refDescriptors = await withProgress(() => callServer('getStaffDescriptor', currentInst(), staff.staffId), 'Checking your record', 20000);
     const faceDistance = bestFaceDistance(liveDescriptor, refDescriptors);
     setStatus('statusBox','info','Stamping location & time...');
+    setCameraStatus('Stamping location & time...');
     const photoBase64 = await stampPhoto(canvas, currentPos.latitude, currentPos.longitude);
-    const res = await callServer('markAttendance', {
+    setCameraStatus('Recording attendance...');
+    const res = await withProgress(() => callServer('markAttendance', {
       institution: currentInst(), staffId: staff.staffId, name: staff.name, designation: staff.designation,
       lat: currentPos.latitude, lng: currentPos.longitude, photoBase64, faceDistance, type
-    });
+    }), 'Recording attendance', 25000);
+    if (res.alreadyTaken) {
+      const msg = `${res.type === 'in' ? 'Check-In' : 'Check-Out'} was already taken today at ${res.time} - no new attendance recorded.`;
+      setStatus('statusBox', 'info', msg);
+      setCameraStatus(msg);
+      speak('Attendance already taken at ' + res.time + '.');
+      hideCamera();
+      if (vEl.srcObject) { vEl.srcObject.getTracks().forEach(t => t.stop()); vEl.srcObject = null; }
+      return;
+    }
     const noteAuto = res.autoCorrected ? ' (no check-in was found today, so this was recorded as your check-in instead)' : '';
     setStatus('statusBox', res.accepted ? 'ok' : 'bad', `${res.status} - ${res.time} on ${res.date} (${res.distance}m from campus)${noteAuto}`);
     setStep('stepDone', res.accepted ? 'done' : null);
@@ -789,10 +881,12 @@ async function captureAndVerify(type, staff) {
     } else {
       attemptsLeft = Math.max(0, attemptsLeft - 1);
       speak('Attendance not verified. You have ' + attemptsLeft + ' chances remaining.');
+      setCameraStatus(`${res.status} - not matched. Line up your face and press Capture to retry (${attemptsLeft} left).`);
       setStatus('statusBox','bad', `${res.status} - not matched closely enough. Line your face up again and press the button to retry (${attemptsLeft} chances left).`);
     }
   } catch (err) {
     setStatus('statusBox','bad', err.message || String(err));
+    setCameraStatus(err.message || String(err));
     setStep('stepDone', null);
     attemptsLeft = Math.max(0, attemptsLeft - 1);
     speak('Something went wrong. You have ' + attemptsLeft + ' chances remaining.');
@@ -801,6 +895,7 @@ async function captureAndVerify(type, staff) {
     if (vEl.srcObject) { vEl.srcObject.getTracks().forEach(t => t.stop()); vEl.srcObject = null; }
   }
 }
+
 
 function showRegister() {
   document.getElementById('checkinCard').style.display = 'none';
@@ -1044,11 +1139,13 @@ function tickClock() {
 function boot() {
   document.getElementById('regInstName').textContent = currentInstName();
   document.getElementById('headerInstName').textContent = currentInstName().split(' - ')[0];
+  updateVoiceToggleUI();
   speakWelcome();
   loadStaff();
 }
 document.getElementById('regInstName').textContent = currentInstName();
 document.getElementById('headerInstName').textContent = currentInstName().split(' - ')[0];
+updateVoiceToggleUI();
 tickClock();
 setInterval(tickClock, 1000);
 if (!API_URL) { document.getElementById('setupCard').style.display = 'block'; }
