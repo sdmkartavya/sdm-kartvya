@@ -1,95 +1,1323 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#1a3a6b">
-<title>Library Staff Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>SDM KARTAVYA - Attendance</title>
+<link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
-<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#16263e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--c1:#1a3a6b;--c2:#0f2547;--gold:#d4a017;--bg:#f6f1e4;--card:#fff;--ink:#1d1a14;--mute:#6b6255;--line:#e4d9bd}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
-header{background:linear-gradient(160deg,var(--c1),var(--c2));color:#fff;padding:18px 16px 14px;border-bottom:4px solid var(--gold)}
-.hin{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px}
-.hin img{width:46px;height:46px;border-radius:10px;border:2px solid var(--gold);background:#1a3fae}
-h1{font-size:19px;line-height:1.2}h1 small{display:block;font-size:12px;font-weight:400;opacity:.85;margin-top:2px}
-.sw{max-width:900px;margin:12px auto 0;display:flex;gap:8px}
-.sw button{flex:1;border:2px solid rgba(255,255,255,.35);background:transparent;color:#fff;font:600 15px inherit;font-family:inherit;padding:10px;border-radius:999px;cursor:pointer}
-.sw button.on{background:var(--gold);border-color:var(--gold);color:#1b1408}
-main{max-width:900px;margin:0 auto;padding:6px 16px 30px}
-h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--c1);margin:20px 2px 10px;display:flex;gap:8px;align-items:baseline}
-h2 span{font-size:13px;letter-spacing:0;text-transform:none;color:var(--mute);font-weight:400}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-@media(max-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.t{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 12px 12px;text-decoration:none;color:inherit;min-height:118px;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:transform .12s,box-shadow .12s}
-.t:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.08)}
-.t:active{transform:scale(.98)}
-.ic{font-size:26px;line-height:1}
-.nm{font-weight:700;font-size:15.5px;color:var(--c1);margin-top:4px}
-.kn{font-size:12px;color:var(--mute)}
-.ds{font-size:12px;color:var(--mute);line-height:1.3}
-.cp{position:absolute;top:8px;right:8px;border:1px solid var(--line);background:#faf6ec;color:var(--mute);font-size:11px;padding:3px 7px;border-radius:7px;cursor:pointer;font-family:inherit}
-.cp:hover{background:#f0e8d2}
-.tip{margin-top:22px;background:#fff8e1;border:1px solid #ecd58a;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;color:#5a4300}
-.tip b{color:#3b2c00}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1d1a14;color:#fff;padding:9px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none}
-.toast.on{opacity:1}
+  :root{
+    --ink:#16263e; --ink-soft:#374863;
+    --teal:#0e6e64; --teal-deep:#0a5750;
+    --gold:#b8862c; --gold-deep:#8f6a20;
+    --bg:#eaf2fb; --card:#ffffff;
+    --line:#e1e5df;
+    --ok:#0e6e64; --bad:#b0392b; --warn:#b8862c;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(180deg,#dfeaf9 0%,#f8fafc 45%,#fbf3de 100%);color:var(--ink);font-family:'Inter',Arial,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;}
+  .flagbar{height:4px;background:linear-gradient(90deg,#ff9933,#f4f2ea 50%,#128a4d);}
+  .headerRow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .headerLeft{display:flex;align-items:center;gap:13px;min-width:0;}
+  .headerRight{text-align:right;flex-shrink:0;margin-left:auto;}
+  .hrBranch{color:#e7d9b8;font-size:12.5px;font-weight:700;}
+  .hrClock{color:#c7d0de;font-size:11px;margin-top:2px;}
+  .voiceToggle{margin-top:6px;padding:5px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.08);color:#fff;font-size:10.5px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .voiceToggle.muted{background:rgba(176,57,43,.35);border-color:rgba(176,57,43,.6);}
+  .logo-circle{width:52px;height:52px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(255,255,255,.55);background:#fff;}
+  .logo-circle img{width:100%;height:100%;object-fit:cover;}
+  .headtext{min-width:0;}
+  header{background:var(--ink);color:#fff;padding:18px 20px 16px;}
+  header h1{margin:0;font-size:21px;font-weight:600;letter-spacing:.2px;}
+  header .sub{margin-top:3px;font-size:12.5px;color:#c7d0de;}
+  header .clock{margin-top:10px;font-size:13px;color:#e7d9b8;font-variant-numeric:tabular-nums;}
+  .wrap{max-width:520px;margin:0 auto;padding:16px 16px 40px;}
+
+  .card{background:var(--card);border-radius:14px;box-shadow:0 1px 3px rgba(22,38,62,.06),0 8px 24px rgba(22,38,62,.05);padding:18px;margin-bottom:16px;border:1px solid var(--line);}
+  label{font-size:11.5px;font-weight:600;color:var(--ink-soft);text-transform:none;letter-spacing:.1px;}
+  select,input{width:100%;padding:11px 12px;border:1px solid #d4dad2;border-radius:9px;font-size:14.5px;margin-top:6px;font-family:inherit;background:#fcfdfb;color:var(--ink);}
+  select:focus,input:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal);}
+
+  .holidayBanner{display:none;background:#fbf3e3;border:1px solid #e9d3a0;color:#7a5a15;padding:12px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:16px;}
+  .holidayBanner.show{display:block;}
+
+  .staffChip{display:none;}
+  .workTimeCard{display:none;margin-top:10px;background:#f4f6f2;border:1px dashed #d4dad2;border-radius:10px;padding:12px 14px;}
+  .workTimeCard .wtTop{display:flex;align-items:center;justify-content:space-between;}
+  .workTimeCard .wtLabel{font-size:12px;color:#8a938a;font-weight:600;}
+  .workTimeCard .wtEdit{font-size:12px;color:var(--bad);font-weight:700;cursor:pointer;}
+  .workTimeCard .wtValue{margin-top:6px;font-size:15px;font-weight:700;color:var(--ink);}
+  .greeting{text-align:center;margin:14px 0 4px;font-size:17px;font-weight:700;color:var(--teal-deep);}
+  .checkedInTime{display:block;font-size:12.5px;font-weight:600;margin-top:2px;}
+  .staffChip b{color:var(--ink);}
+
+  .sessionTabs{display:flex;gap:8px;margin:14px 0 4px;}
+  .sessionTab{flex:1;text-align:center;padding:9px 6px;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;border:1.5px solid var(--line);color:var(--ink-soft);background:#fbfbf9;transition:all .15s;}
+  .sessionTab .t{display:block;font-weight:500;font-size:10.5px;opacity:.8;margin-top:2px;}
+  .sessionTab.active-s1{border-color:var(--teal);color:var(--teal-deep);background:#e9f5f2;}
+  .sessionTab.active-s2{border-color:var(--gold);color:var(--gold-deep);background:#fbf1de;}
+  .sessionTab.current{box-shadow:0 0 0 3px rgba(14,110,100,.12);}
+  .sessionTab.current.s2cur{box-shadow:0 0 0 3px rgba(184,134,44,.14);}
+  .sessionTab .now-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--teal);margin-right:5px;position:relative;top:-1px;}
+  .sessionTab.s2cur .now-dot{background:var(--gold);}
+
+  video,canvas{width:100%;border-radius:0;background:#0d1420;margin-top:12px;aspect-ratio:3/4;object-fit:cover;display:block;}
+  .cameraBox{position:relative;display:none;}
+  .cameraBox.show{display:block;}
+  /* Cropped, zoomed wrapper for the check-in camera only (registration's
+     own camera below is untouched): the raw feed is scaled up and the
+     overflow hidden, so the face fills the oval guide the way a proper
+     ID-check camera does, instead of showing a lot of background/shoulders. */
+  .cameraVideoWrap{position:relative;overflow:hidden;margin-top:12px;aspect-ratio:3/4;background:#0d1420;border-radius:0;}
+  .cameraVideoWrap video{width:100%;height:100%;margin-top:0;object-fit:cover;display:block;transform:scale(1.35);transform-origin:50% 42%;}
+  .faceGuide{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);
+    width:84%;height:76%;border:4px dashed rgba(255,255,255,.9);border-radius:50%;pointer-events:none;box-shadow:0 0 0 2000px rgba(0,0,0,.6);}
+  /* High-contrast bar pinned to the top of the camera itself, so the
+     instruction/status is never lost against a dark or busy background -
+     it always sits on its own solid dark strip. */
+  .cameraStatusBar{position:absolute;top:0;left:0;right:0;z-index:5;background:rgba(0,0,0,.72);
+    color:#fff;font-weight:700;font-size:12.5px;line-height:1.35;text-align:center;padding:10px 14px;}
+  .successOverlay{position:absolute;inset:0;background:rgba(14,110,100,.92);border-radius:11px;
+    display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;}
+  .successOverlay.show{display:flex;}
+  .checkCircle{width:64px;height:64px;border-radius:50%;background:#fff;color:var(--teal);font-size:34px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;margin-bottom:10px;animation:popIn .35s ease-out;}
+  .successMsg{color:#fff;font-size:13.5px;font-weight:700;line-height:1.4;}
+  @keyframes popIn{0%{transform:scale(0.3);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+  .stepRow{display:flex;gap:8px;margin-top:12px;}
+  .stepRow .step{flex:1;text-align:center;padding:7px 4px;border-radius:8px;background:#f4f6f2;font-size:10.5px;font-weight:700;color:#9aa39a;border:1px solid var(--line);transition:all .2s;}
+  .stepRow .step .ic{display:block;font-size:13px;margin-bottom:2px;}
+  .stepRow .step.active{background:#eef2f8;color:#2a4568;border-color:#c9d6e8;}
+  .stepRow .step.done{background:#e7f5f1;color:var(--teal-deep);border-color:#bfe4dc;}
+  .pendingBadge{display:none;font-size:9px;font-weight:800;letter-spacing:.3px;background:#1e9e5a;color:#fff;border-radius:5px;padding:1px 6px;margin-top:4px;}
+  .sessionTab.current .pendingBadge{display:inline-block;}
+  .locrow{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11.5px;color:#6b7a68;}
+  .locrow .dot{width:7px;height:7px;border-radius:50%;background:#c9c9c9;flex-shrink:0;}
+  .locrow .dot.ready{background:var(--teal);}
+
+  .btnrow{display:flex;gap:10px;margin-top:14px;}
+  button{border:none;border-radius:9px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;padding:12px;}
+  .btnrow button{flex:1;padding:20px 12px;font-size:18px;border-radius:12px;}
+  .btn-in{background:var(--teal);color:#fff;}
+  .btn-in:hover{background:var(--teal-deep);}
+  .btn-out{background:#c0392b;color:#fff;}
+  .btn-out:hover{background:#a52f22;}
+  .btn-reg{background:var(--ink);color:#fff;width:100%;margin-top:12px;}
+  button:disabled{opacity:.45;cursor:not-allowed;}
+
+  .status{margin-top:14px;padding:12px 14px;border-radius:9px;font-size:13.5px;font-weight:600;display:none;line-height:1.4;}
+  .status.ok{background:#e7f5f1;color:var(--ok);display:block;}
+  .status.bad{background:#fbeae7;color:var(--bad);display:block;}
+  .status.info{background:#eef2f8;color:#2a4568;display:block;}
+  .small{font-size:11px;color:#8a938a;margin-top:6px;}
+
+  .toggle{text-align:center;margin-top:10px;}
+  .toggle a{font-size:12.5px;color:var(--ink-soft);cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+
+  .quickGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 8px;text-align:center;}
+  .quickBtn{cursor:pointer;font-size:11.5px;font-weight:600;color:var(--ink-soft);}
+  .quickBtn .qIcon{width:46px;height:46px;margin:0 auto 6px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--ink));
+    color:#fff;font-size:19px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(22,38,62,.18);}
+  .modal{position:fixed;inset:0;background:rgba(22,38,62,.45);display:none;align-items:center;justify-content:center;z-index:60;padding:16px;}
+  .modal.show{display:flex;}
+  .modal-card{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:380px;max-height:85vh;overflow-y:auto;}
+  .modal-card h3{margin:0 0 10px;font-size:16px;font-family:'Fraunces',Georgia,serif;}
+  .modal-card .mclose{text-align:right;font-size:12px;color:var(--ink-soft);cursor:pointer;margin-bottom:4px;}
+  .modal-card table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px;}
+  .modal-card th,.modal-card td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left;}
+  .profileRow{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line);}
+  .profileRow b{color:var(--ink);}
+  #loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:99;text-align:center;padding:20px;}
+  #loading .spinner{width:34px;height:34px;border-radius:50%;border:3px solid #d7ddd2;border-top-color:var(--teal);animation:spin 0.9s linear infinite;margin-bottom:14px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #loading .msg{font-size:13.5px;color:var(--ink-soft);max-width:280px;}
+
+  .timerow{display:flex;gap:10px;}
+  .timerow>div{flex:1;}
+  .sessionBlock{border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px;}
+  .sessionBlock h4{margin:0 0 8px;font-size:12.5px;font-family:'Inter';font-weight:700;color:var(--ink-soft);}
 </style>
 </head>
 <body>
-<header>
-  <div class="hin"><img src="icon.png" alt=""><h1>Library Staff Home &#x00B7; &#xCB8;&#xCBF;&#xCAC;&#xCCD;&#xCAC;&#xC82;&#xCA6;&#xCBF;<small id="sub">SDM College of Arts, Science and Commerce, Honavar (U.K.)</small></h1></div>
-  <div class="sw"><button data-b="sdmhonavar">Honavar &#xCB9;&#xCCA;&#xCA8;&#xCCD;&#xCA8;&#xCBE;&#xCB5;&#xCB0;</button></div>
+<div id="loading"><div class="spinner"></div><div class="msg">Loading face verification model...</div></div>
+<div class="flagbar"></div>
+<div class="card" id="setupCard" style="display:none;">
+    <h3 style="margin:0 0 6px;font-size:16px;">Connect to SDM KARTAVYA backend</h3>
+    <div class="small" style="margin-bottom:8px;">Paste the Apps Script Web App URL from your deployment (Deploy -&gt; Manage deployments - it ends in <code>/exec</code>). This is stored only on this device.</div>
+    <input id="apiUrlInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+    <button class="btn-reg" onclick="saveApiUrl()">Save &amp; Continue</button>
+  </div>
+<header class="headerRow">
+  <div class="headerLeft">
+    <div class="logo-circle"><img src="data:image/jpeg;base64,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" alt="SDM College Honavar logo"></div>
+    <div class="headtext">
+      <h1>SDM KARTAVYA</h1>
+      <div class="sub">Geo &amp; Face-Verified Staff Attendance</div>
+    </div>
+  </div>
+  <div class="headerRight">
+    <div class="hrBranch" id="headerBranchName">S.D.M. Degree College</div>
+    <div class="hrClock" id="clockLine">-</div>
+    <button class="voiceToggle" id="voiceToggle" onclick="toggleVoice()" title="Turn voice announcements on or off">&#128266; Voice On</button>
+  </div>
 </header>
-<main id="m"></main>
-<div class="toast" id="toast">Link copied</div>
+
+<div class="wrap">
+
+  <div class="holidayBanner" id="holidayBanner"></div>
+  <div id="puMoved" style="display:none;background:#fff3cd;border:1px solid #e0b100;border-radius:8px;padding:10px 12px;margin:8px 0;font-size:15px">P.U. College staff: your KARTAVYA has moved. <a href="https://script.google.com/macros/s/AKfycbzzHjNKVmoDFu8DtfwlDdQHHO-QAr8cSrg5xjbxGkwOkPzTuTnr_WO6BzhDJV9jF5HqEg/exec" target="_top" style="font-weight:700">Open P.U. KARTAVYA</a></div>
+
+  <div class="card">
+    <label>Library</label>
+    <select id="branchSelect" onchange="onBranchChange()">
+      <option value="Degree">S.D.M. Degree College</option>
+    </select>
+  </div>
+  <script>
+  (function(){ try {
+    var u = (new URLSearchParams(location.search).get('unit') || '').toUpperCase();
+    // 21 Oct 2026: P.U. has its own KARTAVYA now. An old ?unit=PU link or a
+    // phone that remembered P.U. gets a note with the new link.
+    if (u === 'PU' || localStorage.getItem('sdm_kartavya_branch') === 'PU') {
+      document.getElementById('puMoved').style.display = 'block';
+      localStorage.setItem('sdm_kartavya_branch', 'Degree');
+    }
+  } catch (e) {} })();
+  </script>
+
+  <div class="card" id="checkinCard">
+    <label>Staff Member</label>
+    <select id="staffSelect"></select>
+    <div class="staffChip" id="staffChip" style="display:none;"></div>
+    <div class="workTimeCard" id="workTimeCard">
+      <div class="wtTop">
+        <span class="wtLabel">YOUR WORK TIME</span>
+        <span class="wtEdit" onclick="explainWorkTime()">Edit</span>
+      </div>
+      <div class="wtValue" id="wtValue">-</div>
+    </div>
+    <div class="greeting" id="greetingText"></div>
+
+    <div class="sessionTabs">
+      <div class="sessionTab active-s1" id="tabS1">Session 1<span class="t" id="tabS1Time">morning</span></div>
+      <div class="sessionTab active-s2" id="tabS2">Session 2<span class="t" id="tabS2Time">evening</span></div>
+    </div>
+
+    <div class="stepRow">
+      <div class="step" id="stepLoc"><span class="ic">1</span>Location</div>
+      <div class="step" id="stepFace"><span class="ic">2</span>Face</div>
+      <div class="step" id="stepDone"><span class="ic">3</span>Attendance</div>
+    </div>
+
+    <div class="locrow"><span class="dot" id="locDot"></span><span id="locStatus">Location is checked when you press Check In or Check Out.</span></div>
+
+    <div class="cameraBox" id="cameraBox">
+      <div class="cameraVideoWrap"><video id="video" autoplay muted playsinline></video></div>
+      <div class="faceGuide"></div>
+      <div class="cameraStatusBar" id="cameraStatus">Getting ready...</div>
+      <div class="successOverlay" id="successOverlay">
+        <div class="checkCircle">&#10003;</div>
+        <div class="successMsg" id="successMsg"></div>
+      </div>
+    </div>
+    <button class="btn-reg" id="btnCapture" style="display:none;margin-top:10px;">Capture</button>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <div class="small" style="margin-top:12px;margin-bottom:2px;font-weight:700;color:var(--teal-deep);">Session 1</div>
+    <div class="btnrow">
+      <button class="btn-in" id="btnS1In" onclick="punch(1,'in')">S1 Check In</button>
+      <button class="btn-out" id="btnS1Out" onclick="punch(1,'out')">S1 Check Out</button>
+    </div>
+    <div class="small" style="margin-top:10px;margin-bottom:2px;font-weight:700;color:var(--gold-deep);">Session 2</div>
+    <div class="btnrow">
+      <button class="btn-in" id="btnS2In" onclick="punch(2,'in')">S2 Check In</button>
+      <button class="btn-out" id="btnS2Out" onclick="punch(2,'out')">S2 Check Out</button>
+    </div>
+    <div class="status" id="statusBox"></div>
+  </div>
+
+  <div class="card" id="quickActionsCard">
+    <div class="quickGrid">
+      <div class="quickBtn" onclick="requirePin(openOOD)"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></div>OOD</div>
+      <div class="quickBtn" onclick="requirePin(openLeaveSelf)"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>Leave</div>
+      <div class="quickBtn" onclick="requirePin(openMyReport)"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></div>Report</div>
+      <div class="quickBtn" onclick="openWhatsNew()"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2l2.6 6.8L21 11l-6.4 2.2L12 20l-2.6-6.8L3 11l6.4-2.2z"/></svg></div>What's New</div>
+      <div class="quickBtn" onclick="requirePin(openProfile)"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></div>Profile</div>
+      <div class="quickBtn" onclick="requirePin(openMovementHistory)"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.3"/></svg></div>Movement</div>
+      <div class="quickBtn" onclick="openAttendanceAdmin()"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div>Attendance</div>
+      <div class="quickBtn" onclick="openFAQ()"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .5c0 1.7-2.5 2-2.5 3.5" stroke-linecap="round"/><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/></svg></div>FAQ</div>
+      <div class="quickBtn" onclick="openGrievance()"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>Grievances</div>
+      <div class="quickBtn" onclick="openHelpdesk()"><div class="qIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0118 0v6a2 2 0 01-2 2h-1v-7h3M3 18v-6h3v7H4a2 2 0 01-2-2z"/></svg></div>Helpdesk</div>
+    </div>
+  </div>
+
+  <div class="toggle" id="pendingToggle" style="display:none;"><a onclick="showPending()">A staff member still needs to complete their face - tap here</a></div>
+  <div class="card" id="pendingCard" style="display:none;">
+    <h3 style="margin:0 0 4px;font-size:16px;">Complete Your Face Registration</h3>
+    <div class="small" style="margin-bottom:10px;">Your admin has already added you with your name and timing. Pick your name and capture your face to finish - no need to fill the form again.</div>
+    <select id="pendingSelect"></select>
+    <video id="pendVideo" autoplay muted playsinline style="margin-top:12px;"></video>
+    <canvas id="pendCanvas" style="display:none;"></canvas>
+    <button class="btn-reg" onclick="captureAndCompletePending()">Capture My Face</button>
+    <div class="status" id="pendStatus"></div>
+    <div class="toggle"><a onclick="hidePending()">back to check-in</a></div>
+  </div>
+
+  <div class="toggle"><a onclick="showRegister()">+ Register a new staff face (admin/first-time setup)</a></div>
+
+  <div class="card" id="registerCard" style="display:none;">
+    <h3 style="margin:0 0 4px;font-size:17px;">Register Staff</h3>
+    <div class="small">Registering under: <b id="regBranchName"></b></div>
+    <label style="margin-top:10px;display:block;">Full Name</label>
+    <input id="regName" placeholder="e.g. Ganesh Naik">
+    <label style="margin-top:8px;display:block;">Designation</label>
+    <input id="regDesignation" placeholder="e.g. Library Assistant">
+    <label style="margin-top:8px;display:block;">Phone</label>
+    <input id="regPhone" placeholder="10-digit mobile">
+
+    <div class="sessionBlock">
+      <h4>Mon - Fri: Session 1</h4>
+      <div class="timerow">
+        <div><label>In</label><input type="time" id="regS1In" value="09:00"></div>
+        <div><label>Out</label><input type="time" id="regS1Out" value="13:00"></div>
+      </div>
+    </div>
+    <div class="sessionBlock">
+      <h4>Mon - Fri: Session 2</h4>
+      <div class="timerow">
+        <div><label>In</label><input type="time" id="regS2In" value="14:00"></div>
+        <div><label>Out</label><input type="time" id="regS2Out" value="17:30"></div>
+      </div>
+    </div>
+    <div class="sessionBlock">
+      <h4>Saturday: Session 1</h4>
+      <div class="timerow">
+        <div><label>In</label><input type="time" id="regSatS1In" value="09:00"></div>
+        <div><label>Out</label><input type="time" id="regSatS1Out" value="13:00"></div>
+      </div>
+    </div>
+    <div class="sessionBlock">
+      <h4>Saturday: Session 2</h4>
+      <div class="timerow">
+        <div><label>In</label><input type="time" id="regSatS2In" value="14:00"></div>
+        <div><label>Out</label><input type="time" id="regSatS2Out" value="17:30"></div>
+      </div>
+    </div>
+    <div class="small">Each staff member has their own timing. Saturday is a working day with its own timing - clear a Saturday session's boxes if that session is not worked. Sunday is the weekly off; government holidays are added by the admin.</div>
+
+    <video id="regVideo" autoplay muted playsinline style="margin-top:12px;"></video>
+    <canvas id="regCanvas" style="display:none;"></canvas>
+    <button class="btn-reg" onclick="captureAndRegister()">Capture Face &amp; Register</button>
+    <div class="status" id="regStatus"></div>
+    <div class="toggle"><a onclick="showCheckin()">&lt;- back to check-in</a></div>
+  </div>
+
+  <div class="toggle"><a onclick="changeApiUrl()">Change backend URL</a></div>
+  <div class="toggle"><a href="admin.html">Open Admin / Reports panel -&gt;</a></div>
+</div>
+
+<div class="modal" id="oodModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('oodModal')">Close X</div>
+    <h3>On Other Duty</h3>
+    <div id="oodOpenNote" class="small" style="margin-bottom:8px;"></div>
+    <div id="oodOutForm">
+      <label style="font-size:12px;font-weight:600;">Purpose</label>
+      <input id="oodPurpose" placeholder="e.g. Book delivery, bank work">
+      <label style="font-size:12px;font-weight:600;margin-top:8px;display:block;">Destination</label>
+      <input id="oodDestination" placeholder="e.g. Taluk office">
+      <button class="btn-reg" onclick="submitOODOut()">Log Movement Out</button>
+    </div>
+    <div id="oodInForm" style="display:none;">
+      <button class="btn-reg" onclick="submitOODIn()">Log Return (Movement In)</button>
+    </div>
+    <div class="status" id="oodStatus"></div>
+  </div>
+</div>
+
+<div class="modal" id="leaveSelfModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('leaveSelfModal')">Close X</div>
+    <h3>Mark Leave</h3>
+    <label style="font-size:12px;font-weight:600;">Date</label>
+    <input type="date" id="leaveSelfDate">
+    <label style="font-size:12px;font-weight:600;margin-top:8px;display:block;">Remarks (optional)</label>
+    <input id="leaveSelfRemarks" placeholder="e.g. Casual leave">
+    <button class="btn-reg" onclick="submitLeaveSelf()">Submit Leave</button>
+    <div class="status" id="leaveSelfStatus"></div>
+  </div>
+</div>
+
+<div class="modal" id="reportModal">
+  <div class="modal-card" style="max-width:440px;">
+    <div class="mclose" onclick="closeModal('reportModal')">Close X</div>
+    <h3>My Attendance Report</h3>
+    <div class="timerow">
+      <select id="reportMonth" onchange="loadMyReport()"></select>
+      <select id="reportYear" onchange="loadMyReport()"></select>
+    </div>
+    <table><thead><tr><th>Date</th><th>Session 1 (In-Out)</th><th>Session 2 (In-Out)</th><th>S1</th><th>S2</th></tr></thead><tbody id="reportTbody"></tbody></table>
+  </div>
+</div>
+
+<div class="modal" id="profileModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('profileModal')">Close X</div>
+    <h3>My Profile</h3>
+    <div id="profileBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="pinCheckModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="cancelPinCheck()">Close X</div>
+    <h3>Enter Your PIN</h3>
+    <div class="small" style="margin-bottom:8px;">This keeps your personal information private from other staff using this device.</div>
+    <input type="password" id="pinCheckInput" inputmode="numeric" maxlength="4" placeholder="4-digit PIN" style="font-size:20px;text-align:center;letter-spacing:6px;">
+    <button class="btn-reg" onclick="submitPinCheck()">Continue</button>
+    <div class="status" id="pinCheckStatus"></div>
+  </div>
+</div>
+
+<div class="modal" id="helpdeskModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('helpdeskModal')">Close X</div>
+    <h3>Helpdesk</h3>
+    <div class="small">For any issue with attendance, timing, or this app, contact your Librarian directly.</div>
+    <div class="profileRow"><span>V. Si. Library, S.D.M. Degree College</span><b>9448725643</b></div>
+  </div>
+</div>
+
+<div class="modal" id="whatsNewModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('whatsNewModal')">Close X</div>
+    <h3>What's New</h3>
+    <div class="profileRow"><span>Voice guidance</span><b>Added</b></div>
+    <div class="profileRow"><span>Two-session timing per staff</span><b>Added</b></div>
+    <div class="profileRow"><span>Separate Saturday timing</span><b>Added</b></div>
+    <div class="profileRow"><span>Complete-your-face flow</span><b>Added</b></div>
+    <div class="profileRow"><span>Quick actions (this menu)</span><b>Added</b></div>
+  </div>
+</div>
+
+<div class="modal" id="movementModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('movementModal')">Close X</div>
+    <h3>My Movement History (last 14 days)</h3>
+    <table><thead><tr><th>Date</th><th>Out</th><th>Purpose</th><th>In</th></tr></thead><tbody id="movementTbody"></tbody></table>
+  </div>
+</div>
+
+<div class="modal" id="attendanceAdminModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('attendanceAdminModal')">Close X</div>
+    <h3>Mark Attendance for Others</h3>
+    <div class="small">Marking attendance for someone else requires admin access, to keep the geo/face verification meaningful. Open the Admin panel and use the Attendance tab to add leave or correct a record.</div>
+    <a href="admin.html" class="btn-reg" style="display:block;text-align:center;text-decoration:none;margin-top:12px;">Open Admin Panel</a>
+  </div>
+</div>
+
+<div class="modal" id="faqModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('faqModal')">Close X</div>
+    <h3>FAQ</h3>
+    <div class="profileRow" style="display:block;"><b>Location fails to load?</b><div class="small">Allow location access in your browser/site settings, then reload.</div></div>
+    <div class="profileRow" style="display:block;"><b>Camera doesn't show?</b><div class="small">Allow camera access in your browser settings, then reload.</div></div>
+    <div class="profileRow" style="display:block;"><b>Forgot to check out?</b><div class="small">Contact your admin - they can review and correct it from the Admin panel.</div></div>
+    <div class="profileRow" style="display:block;border-bottom:none;"><b>Face not matching?</b><div class="small">Retry with good lighting, no cap/mask, holding the phone the way you did at registration.</div></div>
+  </div>
+</div>
+
+<div class="modal" id="grievanceModal">
+  <div class="modal-card">
+    <div class="mclose" onclick="closeModal('grievanceModal')">Close X</div>
+    <h3>Grievances</h3>
+    <label style="font-size:12px;font-weight:600;">Your message</label>
+    <textarea id="grievanceMsg" rows="4" style="width:100%;padding:10px;border:1px solid #d4dad2;border-radius:9px;font-family:inherit;font-size:13px;margin-top:4px;" placeholder="Describe the issue..."></textarea>
+    <button class="btn-reg" onclick="submitGrievanceMsg()">Submit</button>
+    <div class="status" id="grievanceStatus"></div>
+  </div>
+</div>
+
+
+<script src="face-api.min.js"></script>
 <script>
-var D={"sdmhonavar": {"name": "Honavar", "kn": "\u0cb9\u0cca\u0ca8\u0ccd\u0ca8\u0cbe\u0cb5\u0cb0", "c1": "#0f5c63", "c2": "#0a3f44", "groups": [["Daily work", "\u0ca6\u0cc8\u0ca8\u0c82\u0ca6\u0cbf\u0ca8 \u0c95\u0cc6\u0cb2\u0cb8", [["&#x1F9D1;", "KARTAVYA", "\u0c95\u0cb0\u0ccd\u0ca4\u0cb5\u0ccd\u0caf \u0cb9\u0cbe\u0c9c\u0cb0\u0cbe\u0ca4\u0cbf", "My attendance", "https://script.google.com/macros/s/AKfycbwHPOCSCs_GxWzqTw4olfpGHRnuZ6t4XFdkTlVgtxfWpP5PkkLKsDPIr8pmKdBovZ-w/exec", "gs"], ["&#x1F4DA;", "Issue / Return", "\u0cb5\u0cbf\u0ca4\u0cb0\u0ca3\u0cc6 / \u0cb5\u0cbe\u0caa\u0cb8\u0ccd", "Issue, return, renew", "https://script.google.com/macros/s/AKfycbxvWo77brTJspEP66dkpeNrefHIirAb3s_uUuWFSHl5ChzrPxvTrx0gigGywB668dPH/exec?page=irkiosk", "gs"], ["&#x1F4F1;", "Field Kiosk", "\u0cab\u0cc0\u0cb2\u0ccd\u0ca1\u0ccd \u0c95\u0cbf\u0caf\u0ccb\u0cb8\u0ccd\u0c95\u0ccd", "Stack verify, discard, newspapers", "https://script.google.com/macros/s/AKfycbxvWo77brTJspEP66dkpeNrefHIirAb3s_uUuWFSHl5ChzrPxvTrx0gigGywB668dPH/exec?page=kiosk", "gs"], ["&#x1F6AA;", "Gate Display", "\u0c97\u0cc7\u0c9f\u0ccd \u0caa\u0ccd\u0cb0\u0ca6\u0cb0\u0ccd\u0cb6\u0ca8", "Counter PC check-in screen", "https://script.google.com/macros/s/AKfycbxvWo77brTJspEP66dkpeNrefHIirAb3s_uUuWFSHl5ChzrPxvTrx0gigGywB668dPH/exec?page=gate", "gs"]]], ["Office", "\u0c95\u0c9a\u0cc7\u0cb0\u0cbf", [["&#x2699;&#xFE0F;", "Admin Panel", "\u0c86\u0ca1\u0cb3\u0cbf\u0ca4 \u0cab\u0cb2\u0c95", "Members, cards, reports, feedback", "https://script.google.com/macros/s/AKfycbxvWo77brTJspEP66dkpeNrefHIirAb3s_uUuWFSHl5ChzrPxvTrx0gigGywB668dPH/exec", "gs"], ["&#x1FA91;", "Dead Stock", "\u0ca1\u0cc6\u0ca1\u0ccd \u0cb8\u0ccd\u0c9f\u0cbe\u0c95\u0ccd", "Property register, print", "https://script.google.com/macros/s/AKfycbxvWo77brTJspEP66dkpeNrefHIirAb3s_uUuWFSHl5ChzrPxvTrx0gigGywB668dPH/exec?page=deadstock", "gs"], ["&#x1F916;", "AI Assistant", "\u0c8e\u0c90 \u0cb8\u0cb9\u0cbe\u0caf\u0c95", "Staff app, AI search", "https://script.google.com/macros/s/AKfycbxHIlsE8uD3sa6VI-sO8IIFYynICXjsdvaYRyHZyzvyYZh6SvEii4jNq5tRxKLYbeLQRA/exec", "gs"], ["&#x1F5A8;&#xFE0F;", "Blank Form", "\u0c96\u0cbe\u0cb2\u0cbf \u0c85\u0cb0\u0ccd\u0c9c\u0cbf", "Print membership form", "https://script.google.com/macros/s/AKfycbxvWo77brTJspEP66dkpeNrefHIirAb3s_uUuWFSHl5ChzrPxvTrx0gigGywB668dPH/exec?page=regprint", "gs"]]], ["Share with readers", "\u0c93\u0ca6\u0cc1\u0c97\u0cb0\u0cbf\u0c97\u0cc6 \u0cb9\u0c82\u0c9a\u0cbf", [["&#x1F310;", "Website", "\u0cb5\u0cc6\u0cac\u0ccd\u200c\u0cb8\u0cc8\u0c9f\u0ccd", "Public library site", "../sdmhonavar/", "gh"], ["&#x2705;", "Gate Check-In", "\u0caa\u0ccd\u0cb0\u0cb5\u0cc7\u0cb6 / \u0ca8\u0cbf\u0cb0\u0ccd\u0c97\u0cae\u0ca8", "Reader check-in page", "../sdmhonavar/gate/", "gh"], ["&#x1F4DD;", "Membership Form", "\u0cb8\u0ca6\u0cb8\u0ccd\u0caf\u0ca4\u0ccd\u0cb5 \u0c85\u0cb0\u0ccd\u0c9c\u0cbf", "Online application (website)", "../sdmhonavar/#about", "gh"], ["&#x1F4D6;", "My Library", "\u0ca8\u0ca8\u0ccd\u0ca8 \u0c97\u0ccd\u0cb0\u0c82\u0ca5\u0cbe\u0cb2\u0caf", "Members log in, renew, reserve", "../sdmhonavar/my/", "gh"]]]]}};
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-function show(b){
-  var d=D[b]; if(!d){b='sdmhonavar';d=D[b];}
-  try{localStorage.setItem('staffBranch',b)}catch(e){}
-  document.documentElement.style.setProperty('--c1',d.c1);document.documentElement.style.setProperty('--c2',d.c2);
-  document.querySelectorAll('.sw button').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-b')===b)});
-  document.getElementById('sub').textContent='SDM College of Arts, Science and Commerce, Honavar (U.K.) \u00B7 Library: '+d.name;
-  var h='';
-  d.groups.forEach(function(g){
-    h+='<h2>'+g[0]+' <span>'+g[1]+'</span></h2><div class="grid">';
-    g[2].forEach(function(t){
-      h+='<a class="t" href="'+esc(t[4])+'" target="_blank" rel="noopener">'+
-         (t[5]==='gs'?'<button class="cp" data-u="'+esc(t[4])+'" title="Copy link">Copy</button>':'')+
-         '<span class="ic">'+t[0]+'</span><span class="nm">'+t[1]+'</span><span class="kn">'+t[2]+'</span><span class="ds">'+t[3]+'</span></a>';
+const MODEL_URLS = [
+  'models',
+  'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights',
+  'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights',
+  'https://unpkg.com/face-api.js@0.22.2/weights'
+];
+let staffList = [];
+let currentPos = null;
+let currentSession = 1;
+let attemptsLeft = 5;
+// Voice is ON by default (as before), but some offices need to stay quiet,
+// so it's remembered per-device via localStorage and can be muted from the
+// button in the header at any time - speak() just becomes a no-op while muted.
+function isVoiceMuted() {
+  try { return localStorage.getItem('sdm_kartavya_voice_muted') === '1'; } catch (e) { return false; }
+}
+function toggleVoice() {
+  const muted = !isVoiceMuted();
+  try { localStorage.setItem('sdm_kartavya_voice_muted', muted ? '1' : '0'); } catch (e) {}
+  if (muted) { try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {} }
+  updateVoiceToggleUI();
+}
+function updateVoiceToggleUI() {
+  const btn = document.getElementById('voiceToggle');
+  if (!btn) return;
+  const muted = isVoiceMuted();
+  btn.innerHTML = muted ? '&#128263; Voice Off' : '&#128266; Voice On';
+  btn.classList.toggle('muted', muted);
+}
+function speak(text) {
+  try {
+    if (isVoiceMuted()) return;
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95; u.pitch = 1;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function branchSpokenName(key) {
+  return 'S D M Degree College Library, Honavar';
+}
+function speakWelcome() {
+  speak('Welcome to ' + branchSpokenName(currentBranch()) + '. S D M Kartavya.');
+}
+function resetAttempts() { attemptsLeft = 5; }
+// Paste your deployed Apps Script Web App URL here ONCE (ends in /exec) and
+// commit this file to GitHub. After that, every device that opens this page
+// works immediately - no "Connect to backend" screen, nothing to paste, and
+// nothing lost if a browser's storage is cleared.
+const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbwHPOCSCs_GxWzqTw4olfpGHRnuZ6t4XFdkTlVgtxfWpP5PkkLKsDPIr8pmKdBovZ-w/exec';
+let API_URL = localStorage.getItem('sdm_kartavya_api_url') || DEFAULT_API_URL || '';
+
+function saveApiUrl() {
+  const v = document.getElementById('apiUrlInput').value.trim();
+  if (!v.startsWith('https://script.google.com/')) { alert('Paste the full Apps Script web app URL (ends in /exec).'); return; }
+  localStorage.setItem('sdm_kartavya_api_url', v); API_URL = v;
+  document.getElementById('setupCard').style.display = 'none';
+  boot();
+}
+function changeApiUrl() {
+  document.getElementById('apiUrlInput').value = API_URL;
+  document.getElementById('setupCard').style.display = 'block';
+}
+async function apiPost(body) {
+  const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Server error');
+  return json.data;
+}
+const apiGetStaffList = branch => apiPost({ action: 'getStaffList', branch });
+const apiGetStaffDescriptor = (branch, staffId) => apiPost({ action: 'getStaffDescriptor', branch, staffId });
+const apiReverseGeocode = (lat, lng) => apiPost({ action: 'reverseGeocode', lat, lng });
+const apiCheckGeofence = (branch, lat, lng) => apiPost({ action: 'checkGeofence', branch, lat, lng });
+const apiCheckStaffPin = (branch, staffId, pin) => apiPost({ action: 'checkStaffPin', branch, staffId, pin });
+const apiMarkAttendance = data => apiPost({ action: 'markAttendance', data });
+const apiRegisterStaff = data => apiPost({ action: 'registerStaff', data });
+const apiCompleteStaffFace = data => apiPost({ action: 'completeStaffFace', data });
+const apiGetAttendanceMatrix = (branch, fromDate, toDate) => apiPost({ action: 'getAttendanceMatrix', branch, fromDate, toDate });
+const apiGetOpenMovement = (branch, staffId) => apiPost({ action: 'getOpenMovement', branch, staffId });
+const apiLogMovementOut = data => apiPost({ action: 'logMovementOut', data });
+const apiLogMovementIn = data => apiPost({ action: 'logMovementIn', data });
+const apiMarkLeave = data => apiPost({ action: 'markLeave', data });
+const apiGetStaffOwnAttendance = (branch, staffId, fromDate, toDate) => apiPost({ action: 'getStaffOwnAttendance', branch, staffId, fromDate, toDate });
+const apiGetMovementLog = (branch, fromDate, toDate) => apiPost({ action: 'getMovementLog', branch, fromDate, toDate });
+const apiSubmitGrievance = data => apiPost({ action: 'submitGrievance', data });
+
+async function loadModels() {
+  const loadingEl = document.getElementById('loading');
+  const msg = loadingEl.querySelector('.msg');
+  const timeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('Timed out')), ms))]);
+  let lastErr = null;
+  for (const url of MODEL_URLS) {
+    try {
+      msg.textContent = 'Loading face verification model... (first time only, ~8MB)';
+      await timeout(faceapi.nets.tinyFaceDetector.loadFromUri(url), 25000);
+      msg.textContent = 'Loading face verification model... (2/3)';
+      await timeout(faceapi.nets.faceLandmark68Net.loadFromUri(url), 25000);
+      msg.textContent = 'Loading face verification model... (3/3)';
+      await timeout(faceapi.nets.faceRecognitionNet.loadFromUri(url), 25000);
+      loadingEl.style.display = 'none';
+      return;
+    } catch (err) { lastErr = err; }
+  }
+  loadingEl.innerHTML = `
+    <div style="max-width:300px;">
+      <div style="font-weight:700;color:var(--bad);margin-bottom:8px;">Could not load the face model.</div>
+      <div style="font-size:13px;color:#555;margin-bottom:14px;">
+        This usually means a slow or blocked internet connection on this device.
+        Try switching to Wi-Fi, or a different network, then retry.
+      </div>
+      <button onclick="location.reload()" style="padding:10px 18px;border:none;border-radius:9px;background:var(--ink);color:#fff;font-weight:700;">Retry</button>
+    </div>`;
+}
+function startCamera(videoId) {
+  const video = document.getElementById(videoId);
+  try {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+      .then(stream => video.srcObject = stream)
+      .catch(() => setStatus('statusBox', 'bad', 'Camera permission denied. Allow camera access to mark attendance.'));
+  } catch (err) {
+    setStatus('statusBox', 'bad', 'Camera is blocked in this window. If this keeps happening, open the GitHub Pages link instead of the script.google.com link.');
+  }
+}
+function setStep(id, state) {
+  const el = document.getElementById(id);
+  el.classList.remove('active', 'done');
+  if (state) el.classList.add(state);
+}
+function showCamera() { document.getElementById('cameraBox').classList.add('show'); }
+function hideCamera() { document.getElementById('cameraBox').classList.remove('show'); document.getElementById('btnCapture').style.display = 'none'; }
+
+function getLocation() {
+  setStep('stepLoc', 'active');
+  if (!navigator.geolocation) { document.getElementById('locStatus').textContent = 'Geolocation not supported on this device.'; return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    currentPos = pos.coords;
+    document.getElementById('locDot').classList.add('ready');
+    document.getElementById('locStatus').innerHTML = 'Checking you are within the library area...';
+    callServer('checkGeofence', currentBranch(), pos.coords.latitude, pos.coords.longitude).then(res => {
+      if (res.withinFence) {
+        document.getElementById('locStatus').textContent = 'Location captured (+/-' + Math.round(pos.coords.accuracy) + 'm accuracy, ' + res.distance + 'm from library).';
+        setStep('stepLoc', 'done');
+      } else {
+        document.getElementById('locStatus').innerHTML = `You are <b>${res.distance}m</b> away - need to be within ${res.radius}m of the library. <a onclick="getLocation()" style="cursor:pointer;text-decoration:underline;">Retry location</a>`;
+      }
+    }).catch(() => {
+      document.getElementById('locStatus').textContent = 'Location captured (+/-' + Math.round(pos.coords.accuracy) + 'm accuracy).';
+      setStep('stepLoc', 'done');
     });
-    h+='</div>';
+  }, () => { document.getElementById('locStatus').textContent = 'Location permission denied - required to mark attendance.'; },
+  { enableHighAccuracy: true, timeout: 10000 });
+}
+function fetchLocationOnly() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(pos => { currentPos = pos.coords; }, () => {}, { enableHighAccuracy: true, timeout: 10000 });
+}
+
+function currentBranch() { return document.getElementById('branchSelect').value; }
+function currentBranchName() { return document.getElementById('branchSelect').selectedOptions[0].text; }
+
+function onBranchChange() {
+  try { localStorage.setItem('sdm_kartavya_branch', currentBranch()); } catch (e) {}
+  document.getElementById('regBranchName').textContent = currentBranchName();
+  document.getElementById('headerBranchName').textContent = currentBranchName();
+  loadStaff();
+  speakWelcome();
+}
+
+function loadStaff() {
+  if (!API_URL) return;
+  apiGetStaffList(currentBranch()).then(list => {
+    staffList = list.filter(s => s.active && s.hasFace);
+    const sel = document.getElementById('staffSelect');
+    sel.innerHTML = staffList.map(s => `<option value="${s.staffId}">${s.name}</option>`).join('');
+    updateStaffChip();
+
+    const pending = list.filter(s => s.active && !s.hasFace);
+    const pendToggle = document.getElementById('pendingToggle');
+    if (pending.length) {
+      pendToggle.style.display = 'block';
+      pendToggle.querySelector('a').textContent = pending.length === 1
+        ? `${pending[0].name} still needs to complete their face - tap here`
+        : `${pending.length} staff still need to complete their face - tap here`;
+      document.getElementById('pendingSelect').innerHTML = pending.map(s => `<option value="${s.staffId}">${s.name}</option>`).join('');
+    } else {
+      pendToggle.style.display = 'none';
+      document.getElementById('pendingCard').style.display = 'none';
+    }
+  }).catch(err => setStatus('statusBox','bad','Could not load staff list: ' + err.message));
+}
+function updateStaffChip() {
+  const s = staffList.find(x => x.staffId === document.getElementById('staffSelect').value);
+  const chip = document.getElementById('staffChip');
+  const wtCard = document.getElementById('workTimeCard');
+  if (!s) { chip.style.display = 'none'; wtCard.style.display = 'none'; return; }
+  chip.style.display = 'none';
+  wtCard.style.display = 'block';
+  document.getElementById('wtValue').textContent = (new Date().toLocaleDateString('en-IN', { weekday: 'long', timeZone: 'Asia/Kolkata' }) === 'Saturday' ? 'Saturday: ' : '') + `S1 ${s.s1In||'-'} to ${s.s1Out||'-'}  |  S2 ${s.s2In||'-'} to ${s.s2Out||'-'}`;
+  document.getElementById('tabS1Time').textContent = (s.s1In||'-') + '-' + (s.s1Out||'-');
+  document.getElementById('tabS2Time').textContent = (s.s2In||'-') + '-' + (s.s2Out||'-');
+  resetCheckButtons();
+  refreshTodayStatus();
+}
+function explainWorkTime() {
+  alert('Your work time is set by your library admin to keep attendance records accurate for everyone. If it needs to change, please ask your admin to update it from the Staff & Timing panel.');
+}
+function greetingByHour() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good Morning!';
+  if (h < 17) return 'Good Afternoon!';
+  return 'Good Evening!';
+}
+function updateGreeting() {
+  const el = document.getElementById('greetingText');
+  if (el) el.textContent = greetingByHour();
+}
+// Four dedicated buttons (S1 In, S1 Out, S2 In, S2 Out) instead of a
+// session-tab switcher, so both sessions and all four times are always
+// visible together - nothing to accidentally leave on the wrong tab.
+function btnIdFor(session, type) { return 'btnS' + session + (type === 'in' ? 'In' : 'Out'); }
+function resetCheckButtons() {
+  [1,2].forEach(session => {
+    ['in','out'].forEach(type => {
+      const btn = document.getElementById(btnIdFor(session, type));
+      btn.disabled = false;
+      btn.innerHTML = 'S' + session + ' Check ' + (type === 'in' ? 'In' : 'Out');
+    });
   });
-  h+='<div class="tip"><b>Page opens blank on a phone?</b> Tap <b>Copy</b> on that tile, open Chrome <b>&#x22EE; &#x2192; New Incognito tab</b>, paste and sign in with the library account. On the office computer every tile opens directly.<br><b>Tip:</b> Chrome &#x22EE; &#x2192; <b>Add to Home screen</b> puts this page on your phone as an app icon.</div>';
-  document.getElementById('m').innerHTML=h;
 }
-document.querySelectorAll('.sw button').forEach(function(x){x.onclick=function(){location.hash=x.getAttribute('data-b')}});
-document.addEventListener('click',function(e){
-  var c=e.target.closest('.cp'); if(!c) return; e.preventDefault(); e.stopPropagation();
-  var u=c.getAttribute('data-u'), t=document.getElementById('toast');
-  function done(){t.classList.add('on');setTimeout(function(){t.classList.remove('on')},1400)}
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done,function(){prompt('Copy this link:',u)})}else{prompt('Copy this link:',u)}
+function markButtonChecked(session, type, timeStr) {
+  const btn = document.getElementById(btnIdFor(session, type));
+  btn.disabled = true;
+  btn.innerHTML = (type === 'in' ? 'S' + session + ' CHECKED IN' : 'S' + session + ' CHECKED OUT') + `<span class="checkedInTime">${timeStr}</span>`;
+}
+// Pulls today's actual record for the selected staff from the sheet and
+// updates all four buttons to match reality - so reopening the page,
+// switching staff and back, or a phone restart never shows a blank "Check
+// In" for something that was already recorded today.
+function refreshTodayStatus() {
+  const staffId = document.getElementById('staffSelect').value;
+  if (!staffId || !API_URL) return;
+  const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // yyyy-MM-dd
+  callServer('getStaffOwnAttendance', currentBranch(), staffId, todayStr, todayStr).then(rows => {
+    const row = rows && rows[0];
+    if (!row) return;
+    if (row.S1TimeIn) markButtonChecked(1, 'in', row.S1TimeIn);
+    if (row.S1TimeOut) markButtonChecked(1, 'out', row.S1TimeOut);
+    if (row.S2TimeIn) markButtonChecked(2, 'in', row.S2TimeIn);
+    if (row.S2TimeOut) markButtonChecked(2, 'out', row.S2TimeOut);
+  }).catch(() => {}); // silent - buttons just stay in their default state
+}
+// Fired by the four buttons directly - each one knows its own session and
+// type, so there's no shared "currentSession" state to get out of sync.
+function punch(session, type) {
+  // Belt-and-braces client-side check: the button is already disabled once
+  // refreshTodayStatus() confirms a real success, but there's a brief
+  // window right after a page load / staff switch before that fetch
+  // finishes. Catching it here means a double-tap in that window never
+  // even opens the camera - it just says the punch was already taken.
+  const btn = document.getElementById(btnIdFor(session, type));
+  if (btn && btn.disabled) {
+    const timeEl = btn.querySelector('.checkedInTime');
+    const t = timeEl ? timeEl.textContent : '';
+    setStatus('statusBox', 'info', `Session ${session} ${type === 'in' ? 'Check-In' : 'Check-Out'} was already taken${t ? ' at ' + t : ''} - no new attendance recorded.`);
+    speak('Attendance already taken' + (t ? ' at ' + t : '') + '.');
+    return;
+  }
+  currentSession = session;
+  speak('Session ' + session + (type === 'in' ? ' check in' : ' check out'));
+  return submitAttendance(type);
+}
+document.addEventListener('change', e => {
+  if (e.target.id === 'staffSelect') {
+    updateStaffChip();
+    resetAttempts();
+    const s = staffList.find(x => x.staffId === e.target.value);
+    if (s) speak(s.name);
+  }
 });
-function chooser(){
-  document.querySelectorAll('.sw button').forEach(function(x){x.classList.remove('on')});
-  document.getElementById('m').innerHTML='<h2>Choose your branch <span>&#x0CA8;&#x0CBF;&#x0CAE;&#x0CCD;&#x0CAE; &#x0CB6;&#x0CBE;&#x0C96;&#x0CC6; &#x0C86;&#x0CAF;&#x0CCD;&#x0C95;&#x0CC6; &#x0CAE;&#x0CBE;&#x0CA1;&#x0CBF;</span></h2>'+
-    '<div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">'+
-    '<a class="t" href="#sdmhonavar" style="min-height:140px;justify-content:center;align-items:center"><span class="ic">&#x1F3DB;&#xFE0F;</span><span class="nm" style="font-size:20px">SDM Honavar</span><span class="kn">&#x0CB9;&#x0CCA;&#x0CA8;&#x0CCD;&#x0CA8;&#x0CBE;&#x0CB5;&#x0CB0;</span></a>';
+
+function captureFrame(videoId, canvasId) {
+  const video = document.getElementById(videoId), canvas = document.getElementById(canvasId);
+  canvas.width = video.videoWidth || 320; canvas.height = video.videoHeight || 240;
+  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+  return canvas;
 }
-function route(){
-  var h=(location.hash||'').replace('#','');
-  if(D[h]){show(h);return;}
-  var saved=null; try{saved=localStorage.getItem('staffBranch')}catch(e){}
-  if(D[saved]) show(saved); else show(Object.keys(D)[0]);
+// inputSize defaults to 416 - noticeably slow on older/low-end Android
+// phones since it scales up the whole detection cost. 320 is plenty for a
+// single close-up face filling the oval guide and runs meaningfully faster
+// with no real accuracy loss for this use case.
+async function getDescriptor(canvas) {
+  const det = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
+    .withFaceLandmarks().withFaceDescriptor();
+  return det ? Array.from(det.descriptor) : null;
 }
-window.addEventListener('hashchange',route);
-route();
+const API_FN = {
+  reverseGeocode: apiReverseGeocode,
+  checkGeofence: apiCheckGeofence,
+  checkStaffPin: apiCheckStaffPin,
+  getStaffDescriptor: apiGetStaffDescriptor,
+  markAttendance: apiMarkAttendance,
+  registerStaff: apiRegisterStaff,
+  completeStaffFace: apiCompleteStaffFace,
+  getAttendanceMatrix: apiGetAttendanceMatrix,
+  getOpenMovement: apiGetOpenMovement,
+  logMovementOut: apiLogMovementOut,
+  logMovementIn: apiLogMovementIn,
+  markLeave: apiMarkLeave,
+  getStaffOwnAttendance: apiGetStaffOwnAttendance,
+  getMovementLog: apiGetMovementLog,
+  submitGrievance: apiSubmitGrievance
+};
+function callServer(fnName, ...args) { return API_FN[fnName](...args); }
+function setStatus(id, cls, msg) { const el = document.getElementById(id); el.className = 'status ' + cls; el.textContent = msg; }
+// Mirrors the current step's message onto a solid, high-contrast bar
+// pinned to the TOP of the live camera view itself, not just the status
+// box further down the page - always visible over the video, whatever the
+// lighting behind it.
+function setCameraStatus(msg) {
+  const el = document.getElementById('cameraStatus');
+  if (el) el.textContent = msg;
+}
+
+function formatOverlayTime(d) {
+  const day = d.toLocaleDateString('en-IN', { weekday: 'long', timeZone: 'Asia/Kolkata' });
+  const date = d.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata' });
+  const time = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
+  return `${day}, ${date} ${time} GMT +05:30`;
+}
+function wrapText(ctx, text, maxWidth) {
+  const words = (text || '').split(' '); const lines = []; let line = '';
+  words.forEach(w => { const test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = w; } else line = test; });
+  if (line) lines.push(line); return lines.slice(0, 3);
+}
+function drawGeoOverlay(canvas, opts) {
+  const ctx = canvas.getContext('2d'); const w = canvas.width, h = canvas.height;
+  const barH = Math.max(150, Math.round(h * 0.30)); const y0 = h - barH;
+  const mapSize = Math.round(barH * 0.62); const pad = 12;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(0, y0, w, barH);
+  const mx = pad, my = y0 + (barH - mapSize) / 2;
+  ctx.fillStyle = '#dfe7f0'; ctx.fillRect(mx, my, mapSize, mapSize);
+  ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1;
+  for (let gx = mx; gx <= mx + mapSize; gx += mapSize / 5) { ctx.beginPath(); ctx.moveTo(gx, my); ctx.lineTo(gx, my + mapSize); ctx.stroke(); }
+  for (let gy = my; gy <= my + mapSize; gy += mapSize / 5) { ctx.beginPath(); ctx.moveTo(mx, gy); ctx.lineTo(mx + mapSize, gy); ctx.stroke(); }
+  const px = mx + mapSize / 2, py = my + mapSize / 2;
+  ctx.fillStyle = '#b0392b'; ctx.beginPath(); ctx.arc(px, py - 6, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(px - 6, py - 2); ctx.lineTo(px + 6, py - 2); ctx.lineTo(px, py + 10); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.strokeRect(mx, my, mapSize, mapSize);
+  const tx = mx + mapSize + pad; let ty = y0 + pad + 14;
+  ctx.fillStyle = '#fff'; ctx.font = `bold ${Math.round(barH * 0.11)}px sans-serif`;
+  ctx.fillText(opts.title + '  \uD83C\uDDEE\uD83C\uDDF3', tx, ty); ty += barH * 0.14;
+  ctx.font = `${Math.round(barH * 0.085)}px sans-serif`;
+  wrapText(ctx, opts.address || '', w - tx - pad).forEach(line => { ctx.fillText(line, tx, ty); ty += barH * 0.12; });
+  ctx.font = `${Math.round(barH * 0.09)}px sans-serif`;
+  ctx.fillText(`Lat ${opts.lat.toFixed(6)}\u00B0  Long ${opts.lng.toFixed(6)}\u00B0`, tx, ty); ty += barH * 0.13;
+  ctx.fillText(opts.timeStr, tx, ty);
+  const badge = 'SDM KARTAVYA | Session ' + currentSession;
+  ctx.font = `bold ${Math.round(h * 0.028)}px sans-serif`;
+  const bw = ctx.measureText(badge).width + 16;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(w - bw - 8, 8, bw, Math.round(h * 0.045));
+  ctx.fillStyle = '#fff'; ctx.fillText(badge, w - bw, 8 + Math.round(h * 0.032));
+  return canvas;
+}
+async function stampPhoto(canvas, lat, lng) {
+  let address = null;
+  // Reverse-geocoding (for the readable address stamped on the photo) is
+  // cosmetic only - GPS coordinates are what's actually checked. But if
+  // Google's geocoding service is slow/throttled, an un-timed await here
+  // can stall the ENTIRE attendance flow for minutes. Cap it at 4 seconds
+  // and fall back to coordinates-only, same as the try/catch already did.
+  try {
+    address = await Promise.race([
+      callServer('reverseGeocode', lat, lng),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('geocode timeout')), 4000))
+    ]);
+  } catch (e) {}
+  drawGeoOverlay(canvas, {
+    title: address ? address.split(',')[0] : currentBranchName(),
+    address: address || 'Address unavailable - GPS coordinates below are authoritative',
+    lat, lng, timeStr: formatOverlayTime(new Date())
+  });
+  return canvas.toDataURL('image/jpeg', 0.8);
+}
+
+function waitForVideoReady(videoEl, timeoutMs) {
+  return new Promise(resolve => {
+    if (videoEl.readyState >= 2) return resolve(true);
+    const to = setTimeout(() => resolve(false), timeoutMs || 4000);
+    videoEl.addEventListener('loadeddata', () => { clearTimeout(to); resolve(true); }, { once: true });
+  });
+}
+
+function bestFaceDistance(liveDescriptor, refDescriptors) {
+  if (!refDescriptors) return null;
+  const candidates = [refDescriptors.primary, refDescriptors.secondary]
+    .filter(d => d && d.length)
+    .map(d => faceapi.euclideanDistance(liveDescriptor, d));
+  return candidates.length ? Math.min(...candidates) : null;
+}
+
+function getPositionOnce() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject(new Error('no geo'));
+    navigator.geolocation.getCurrentPosition(pos => resolve(pos.coords), reject, { enableHighAccuracy: true, timeout: 10000 });
+  });
+}
+async function getAccurateLocation() {
+  let coords = await getPositionOnce();
+  if (coords.accuracy > 50) {
+    setStatus('statusBox','info', `Improving location accuracy (currently +/-${Math.round(coords.accuracy)}m)...`);
+    try {
+      const coords2 = await getPositionOnce();
+      if (coords2.accuracy < coords.accuracy) coords = coords2;
+    } catch (e) {}
+  }
+  return coords;
+}
+
+// Shows the Capture button and waits for the staff member to press it -
+// used both the first time the camera opens and on a retry - so nothing is
+// captured or compared until they've actually lined their face up and say
+// they're ready, instead of the app grabbing a frame the instant the
+// camera turns on.
+function waitForCaptureClick() {
+  return new Promise(resolve => {
+    const btn = document.getElementById('btnCapture');
+    btn.style.display = 'inline-block';
+    btn.onclick = () => { btn.style.display = 'none'; resolve(); };
+  });
+}
+
+async function submitAttendance(type) {
+  const staffId = document.getElementById('staffSelect').value;
+  const staff = staffList.find(s => s.staffId === staffId);
+  if (!staff) return setStatus('statusBox','bad','No staff selected.');
+
+  const vElCheck = document.getElementById('video');
+  if (vElCheck.srcObject && currentPos) {
+    setStatus('statusBox','info','Line up your face in the oval, then press Capture.');
+    setCameraStatus('Line up your face in the oval, then press Capture below.');
+    speak('Line up your face and press capture.');
+    await waitForCaptureClick();
+    return await captureAndVerify(type, staff);
+  }
+
+  setStep('stepLoc', 'active'); setStep('stepFace', null); setStep('stepDone', null);
+  setStatus('statusBox','info','Getting your location...');
+  let coords;
+  try {
+    coords = await getAccurateLocation();
+  } catch (e) {
+    setStep('stepLoc', null);
+    return setStatus('statusBox','bad','Location permission denied - required to mark attendance.');
+  }
+  currentPos = coords;
+  document.getElementById('locDot').classList.add('ready');
+
+  let geo = null;
+  try { geo = await callServer('checkGeofence', currentBranch(), coords.latitude, coords.longitude); } catch (e) {}
+  if (geo && !geo.withinFence) {
+    setStep('stepLoc', null);
+    document.getElementById('locStatus').innerHTML = `You are not in the library location - ${geo.distance}m away, need within ${geo.radius}m.`;
+    speak('You are not in the library location.');
+    return setStatus('statusBox','bad', `Not in the library location (${geo.distance}m away, must be within ${geo.radius}m). Move closer and press the button again.`);
+  }
+  document.getElementById('locStatus').textContent = 'Location captured' + (geo ? ` (${geo.distance}m from library, +/-${Math.round(coords.accuracy)}m GPS accuracy).` : '.');
+  setStep('stepLoc', 'done');
+  setStep('stepFace', 'active');
+  speak('Location success.');
+
+  setStatus('statusBox','info','Starting camera...');
+  startCamera('video'); showCamera();
+  const vEl = document.getElementById('video');
+  const ready = await waitForVideoReady(vEl, 4000);
+  if (!ready || !vEl.srcObject) {
+    hideCamera();
+    return setStatus('statusBox','bad','Camera permission denied. Allow camera access to mark attendance.');
+  }
+
+  setStatus('statusBox','info','Line up your face in the oval, then press Capture.');
+  setCameraStatus('Line up your face in the oval, then press Capture below.');
+  speak('Line up your face and press capture.');
+  await waitForCaptureClick();
+  return await captureAndVerify(type, staff);
+}
+
+// Wraps a slow server call with (a) a visible "still working... (Ns)" tick
+// every 3 seconds instead of a silent frozen screen, and (b) a hard
+// timeout that fails clearly instead of hanging forever - this is what was
+// making a slow/cold Apps Script response feel like the app was frozen
+// with no way to tell if it was still doing anything.
+function withProgress(promiseFactory, label, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    let settled = false;
+    const tick = setInterval(() => {
+      if (settled) return;
+      const secs = Math.round((Date.now() - started) / 1000);
+      setCameraStatus(label + ' - still working (' + secs + 's)...');
+    }, 3000);
+    const to = setTimeout(() => {
+      if (settled) return;
+      settled = true; clearInterval(tick);
+      reject(new Error('This is taking longer than expected - check your internet connection and press the button to try again.'));
+    }, timeoutMs);
+    promiseFactory().then(res => {
+      if (settled) return;
+      settled = true; clearInterval(tick); clearTimeout(to);
+      resolve(res);
+    }).catch(err => {
+      if (settled) return;
+      settled = true; clearInterval(tick); clearTimeout(to);
+      reject(err);
+    });
+  });
+}
+
+async function captureAndVerify(type, staff) {
+  const vEl = document.getElementById('video');
+  setStatus('statusBox','info','Verifying face...');
+  setCameraStatus('Verifying face...');
+  speak('Capture face.');
+  const canvas = captureFrame('video','canvas');
+  const liveDescriptor = await getDescriptor(canvas);
+  if (!liveDescriptor) {
+    attemptsLeft = Math.max(0, attemptsLeft - 1);
+    speak('No face detected. You have ' + attemptsLeft + ' chances remaining.');
+    setCameraStatus('No face detected - line up your face and press Capture again.');
+    return setStatus('statusBox','bad','No face detected - line up your face in the oval and press the button again.');
+  }
+  setStep('stepFace', 'done');
+  setStep('stepDone', 'active');
+  speak('Face detected. Verifying match.');
+  try {
+    setCameraStatus('Checking your face against your record...');
+    const refDescriptors = await withProgress(() => callServer('getStaffDescriptor', currentBranch(), staff.staffId), 'Checking your record', 20000);
+    const faceDistance = bestFaceDistance(liveDescriptor, refDescriptors);
+    setStatus('statusBox','info','Stamping location & time...');
+    setCameraStatus('Stamping location & time...');
+    const photoBase64 = await stampPhoto(canvas, currentPos.latitude, currentPos.longitude);
+    setCameraStatus('Recording attendance...');
+    const res = await withProgress(() => callServer('markAttendance', {
+      branch: currentBranch(), staffId: staff.staffId, name: staff.name, designation: staff.designation,
+      session: currentSession, lat: currentPos.latitude, lng: currentPos.longitude, photoBase64, faceDistance, type
+    }), 'Recording attendance', 25000);
+    if (res.alreadyTaken) {
+      const msg = `Session ${res.session} ${res.type === 'in' ? 'Check-In' : 'Check-Out'} was already taken today at ${res.time} - no new attendance recorded.`;
+      setStatus('statusBox', 'info', msg);
+      setCameraStatus(msg);
+      speak('Attendance already taken at ' + res.time + '.');
+      markButtonChecked(res.session, res.type, res.time);
+      hideCamera();
+      if (vEl.srcObject) { vEl.srcObject.getTracks().forEach(t => t.stop()); vEl.srcObject = null; }
+      return;
+    }
+    const actualType = res.type || type;
+    const noteAuto = res.autoCorrected ? ` (no check-in was found for Session ${res.session}, so this was recorded as your check-in instead)` : '';
+    setStatus('statusBox', res.accepted ? 'ok' : 'bad', `Session ${res.session} - ${res.status} - ${res.time} on ${res.date} (${res.distance}m from branch)${noteAuto}`);
+    setStep('stepDone', res.accepted ? 'done' : null);
+    if (res.accepted) {
+      document.getElementById('successMsg').textContent = `${res.status} - ${res.time}` + (res.autoCorrected ? ' (recorded as Check-In)' : '');
+      document.getElementById('successOverlay').classList.add('show');
+      speak(res.autoCorrected ? 'No check-in was found, so this was recorded as your check-in instead.' : 'Attendance taken successfully. Thank you. Good day.');
+      resetAttempts();
+      markButtonChecked(res.session, actualType, res.time);
+      await new Promise(r => setTimeout(r, 1800));
+      document.getElementById('successOverlay').classList.remove('show');
+      hideCamera();
+      if (vEl.srcObject) { vEl.srcObject.getTracks().forEach(t => t.stop()); vEl.srcObject = null; }
+    } else {
+      attemptsLeft = Math.max(0, attemptsLeft - 1);
+      speak('Attendance not verified. You have ' + attemptsLeft + ' chances remaining.');
+      setCameraStatus(`${res.status} - not matched. Line up your face and press Capture to retry (${attemptsLeft} left).`);
+      setStatus('statusBox','bad', `${res.status} - not matched closely enough. Line your face up again and press the button to retry (${attemptsLeft} chances left).`);
+    }
+  } catch (err) {
+    setStatus('statusBox','bad', err.message || String(err));
+    setCameraStatus(err.message || String(err));
+    setStep('stepDone', null);
+    attemptsLeft = Math.max(0, attemptsLeft - 1);
+    speak('Something went wrong. You have ' + attemptsLeft + ' chances remaining.');
+    hideCamera();
+    document.getElementById('successOverlay').classList.remove('show');
+    if (vEl.srcObject) { vEl.srcObject.getTracks().forEach(t => t.stop()); vEl.srcObject = null; }
+  }
+}
+
+function showRegister() {
+  document.getElementById('checkinCard').style.display = 'none';
+  document.getElementById('quickActionsCard').style.display = 'none';
+  document.getElementById('registerCard').style.display = 'block';
+  document.getElementById('regBranchName').textContent = currentBranchName();
+  fetchLocationOnly();
+  startCamera('regVideo');
+}
+function showCheckin() {
+  document.getElementById('registerCard').style.display = 'none';
+  document.getElementById('checkinCard').style.display = 'block';
+  document.getElementById('quickActionsCard').style.display = 'block';
+}
+function showPending() {
+  document.getElementById('checkinCard').style.display = 'none';
+  document.getElementById('quickActionsCard').style.display = 'none';
+  document.getElementById('pendingToggle').style.display = 'none';
+  document.getElementById('pendingCard').style.display = 'block';
+  fetchLocationOnly();
+  startCamera('pendVideo');
+}
+function hidePending() {
+  document.getElementById('pendingCard').style.display = 'none';
+  document.getElementById('checkinCard').style.display = 'block';
+  document.getElementById('quickActionsCard').style.display = 'block';
+  document.getElementById('pendingToggle').style.display = 'block';
+}
+
+/* ---- Quick actions: OOD / Leave / Report / Profile / Helpdesk ---- */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function currentStaff() { return staffList.find(s => s.staffId === document.getElementById('staffSelect').value); }
+
+let pendingPinAction = null;
+function requirePin(actionFn) {
+  const s = currentStaff(); if (!s) return;
+  pendingPinAction = actionFn;
+  document.getElementById('pinCheckInput').value = '';
+  document.getElementById('pinCheckStatus').textContent = '';
+  document.getElementById('pinCheckStatus').className = 'status';
+  openModal('pinCheckModal');
+}
+function cancelPinCheck() { pendingPinAction = null; closeModal('pinCheckModal'); }
+function submitPinCheck() {
+  const s = currentStaff(); if (!s) return;
+  const pin = document.getElementById('pinCheckInput').value.trim();
+  callServer('checkStaffPin', currentBranch(), s.staffId, pin).then(ok => {
+    if (ok) {
+      closeModal('pinCheckModal');
+      const fn = pendingPinAction; pendingPinAction = null;
+      if (fn) fn();
+    } else {
+      document.getElementById('pinCheckStatus').className = 'status bad';
+      document.getElementById('pinCheckStatus').textContent = 'Incorrect PIN.';
+    }
+  });
+}
+document.getElementById('pinCheckInput').addEventListener('keydown', e => { if (e.key === 'Enter') submitPinCheck(); });
+
+function openOOD() {
+  const s = currentStaff();
+  if (!s) return;
+  callServer('getOpenMovement', currentBranch(), s.staffId).then(open => {
+    document.getElementById('oodStatus').textContent = '';
+    if (open) {
+      document.getElementById('oodOpenNote').textContent = `Out since ${open.TimeOut} - ${open.Purpose || ''} (${open.Destination || ''})`;
+      document.getElementById('oodOutForm').style.display = 'none';
+      document.getElementById('oodInForm').style.display = 'block';
+    } else {
+      document.getElementById('oodOpenNote').textContent = '';
+      document.getElementById('oodOutForm').style.display = 'block';
+      document.getElementById('oodInForm').style.display = 'none';
+    }
+    openModal('oodModal');
+  });
+}
+function submitOODOut() {
+  const s = currentStaff(); if (!s) return;
+  callServer('logMovementOut', {
+    branch: currentBranch(), staffId: s.staffId, name: s.name, designation: s.designation,
+    purpose: document.getElementById('oodPurpose').value, destination: document.getElementById('oodDestination').value
+  }).then(() => { closeModal('oodModal'); setStatus('statusBox','ok','Movement logged - have a safe trip.'); })
+    .catch(err => { document.getElementById('oodStatus').textContent = err.message; });
+}
+function submitOODIn() {
+  const s = currentStaff(); if (!s) return;
+  callServer('logMovementIn', { branch: currentBranch(), staffId: s.staffId })
+    .then(() => { closeModal('oodModal'); setStatus('statusBox','ok','Welcome back - movement closed.'); })
+    .catch(err => { document.getElementById('oodStatus').textContent = err.message; });
+}
+
+function openLeaveSelf() {
+  const s = currentStaff(); if (!s) return;
+  document.getElementById('leaveSelfDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('leaveSelfStatus').textContent = '';
+  openModal('leaveSelfModal');
+}
+function submitLeaveSelf() {
+  const s = currentStaff(); if (!s) return;
+  callServer('markLeave', {
+    branch: currentBranch(), staffId: s.staffId, name: s.name, designation: s.designation,
+    date: document.getElementById('leaveSelfDate').value, remarks: document.getElementById('leaveSelfRemarks').value
+  }).then(() => { closeModal('leaveSelfModal'); setStatus('statusBox','ok','Leave marked for ' + document.getElementById('leaveSelfDate').value + '.'); })
+    .catch(err => { document.getElementById('leaveSelfStatus').textContent = err.message; });
+}
+
+function statusColor(s) {
+  if (s === 'P' || s === 'Checked Out') return '#0e6e64';
+  if (s === 'L') return '#b8862c';
+  if (s === 'A') return '#b0392b';
+  if (s === 'LV') return '#5b3fc0';
+  if (s === 'H') return '#c0692b';
+  if (s === 'WO') return '#888';
+  return '#333';
+}
+function openMyReport() {
+  const s = currentStaff(); if (!s) return;
+  const monthSel = document.getElementById('reportMonth');
+  const yearSel = document.getElementById('reportYear');
+  if (!monthSel.options.length) {
+    ['January','February','March','April','May','June','July','August','September','October','November','December']
+      .forEach((m, i) => monthSel.innerHTML += `<option value="${i+1}">${m}</option>`);
+    const nowY = new Date().getFullYear();
+    for (let y = nowY - 1; y <= nowY + 1; y++) yearSel.innerHTML += `<option value="${y}">${y}</option>`;
+  }
+  const now = new Date();
+  monthSel.value = now.getMonth() + 1;
+  yearSel.value = now.getFullYear();
+  loadMyReport();
+  openModal('reportModal');
+}
+function loadMyReport() {
+  const s = currentStaff(); if (!s) return;
+  const month = parseInt(document.getElementById('reportMonth').value, 10);
+  const year = parseInt(document.getElementById('reportYear').value, 10);
+  const pad = n => String(n).padStart(2, '0');
+  const lastDay = new Date(year, month, 0).getDate();
+  const fromDate = `${year}-${pad(month)}-01`;
+  const toDate = `${year}-${pad(month)}-${pad(lastDay)}`;
+  callServer('getStaffOwnAttendance', currentBranch(), s.staffId, fromDate, toDate).then(rows => {
+    rows.sort((a,b) => a.Date < b.Date ? -1 : 1);
+    document.getElementById('reportTbody').innerHTML = rows.map(r => {
+      const s1Range = (r.S1TimeIn || r.S1TimeOut) ? `${r.S1TimeIn||'-'} \u2192 ${r.S1TimeOut||'-'}` : '-';
+      const s2Range = (r.S2TimeIn || r.S2TimeOut) ? `${r.S2TimeIn||'-'} \u2192 ${r.S2TimeOut||'-'}` : '-';
+      const s1 = r.S1StatusIn || '-';
+      const s2 = r.S2StatusIn || '-';
+      const day = r.Date.slice(8,10);
+      return `<tr><td>${day}</td><td>${s1Range}</td><td>${s2Range}</td>
+        <td style="color:${statusColor(s1)};font-weight:700;">${s1}</td>
+        <td style="color:${statusColor(s2)};font-weight:700;">${s2}</td></tr>`;
+    }).join('') || '<tr><td colspan="5" style="text-align:center;color:#999;">No records.</td></tr>';
+  });
+}
+
+function openProfile() {
+  const s = currentStaff(); if (!s) return;
+  document.getElementById('profileBody').innerHTML = `
+    <div class="profileRow"><span>Name</span><b>${s.name}</b></div>
+    <div class="profileRow"><span>Designation</span><b>${s.designation || '-'}</b></div>
+    <div class="profileRow"><span>Phone</span><b>${s.phone || '-'}</b></div>
+    <div class="profileRow"><span>Staff ID</span><b>${s.staffId}</b></div>
+    <div class="profileRow"><span>Mon-Fri Session 1</span><b>${s.wkS1In||'-'} - ${s.wkS1Out||'-'}</b></div>
+    <div class="profileRow"><span>Mon-Fri Session 2</span><b>${s.wkS2In||'-'} - ${s.wkS2Out||'-'}</b></div>
+    <div class="profileRow"><span>Saturday Session 1</span><b>${s.satS1In||'-'} - ${s.satS1Out||'-'}</b></div>
+    <div class="profileRow"><span>Saturday Session 2</span><b>${s.satS2In||'-'} - ${s.satS2Out||'-'}</b></div>`;
+  openModal('profileModal');
+}
+function openHelpdesk() { openModal('helpdeskModal'); }
+function openWhatsNew() { openModal('whatsNewModal'); }
+
+function openMovementHistory() {
+  const s = currentStaff(); if (!s) return;
+  const to = new Date(); const from = new Date(); from.setDate(from.getDate() - 13);
+  const fmt = d => d.toISOString().slice(0,10);
+  callServer('getMovementLog', currentBranch(), fmt(from), fmt(to)).then(rows => {
+    const mine = rows.filter(r => r.StaffID === s.staffId);
+    document.getElementById('movementTbody').innerHTML = mine.map(r => `
+      <tr><td>${r.Date}</td><td>${r.TimeOut}</td><td>${r.Purpose||''}</td><td>${r.TimeIn||'-'}</td></tr>
+    `).join('') || '<tr><td colspan="4" style="text-align:center;color:#999;">No movement records.</td></tr>';
+    openModal('movementModal');
+  });
+}
+
+function openAttendanceAdmin() { openModal('attendanceAdminModal'); }
+function openFAQ() { openModal('faqModal'); }
+
+function openGrievance() {
+  document.getElementById('grievanceMsg').value = '';
+  document.getElementById('grievanceStatus').textContent = '';
+  openModal('grievanceModal');
+}
+function submitGrievanceMsg() {
+  const s = currentStaff(); if (!s) return;
+  const msg = document.getElementById('grievanceMsg').value.trim();
+  if (!msg) return;
+  callServer('submitGrievance', { branch: currentBranch(), staffId: s.staffId, name: s.name, message: msg })
+    .then(() => { closeModal('grievanceModal'); setStatus('statusBox','ok','Grievance submitted - your admin will follow up.'); })
+    .catch(err => { document.getElementById('grievanceStatus').textContent = err.message; });
+}
+
+async function captureAndRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const designation = document.getElementById('regDesignation').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const s1In = document.getElementById('regS1In').value;
+  const s1Out = document.getElementById('regS1Out').value;
+  const s2In = document.getElementById('regS2In').value;
+  const s2Out = document.getElementById('regS2Out').value;
+  if (!name) return setStatus('regStatus','bad','Enter the staff name.');
+  if (!currentPos) return setStatus('regStatus','bad','Waiting for GPS location - please allow location access.');
+  const canvas = captureFrame('regVideo','regCanvas');
+  const descriptor = await getDescriptor(canvas);
+  if (!descriptor) return setStatus('regStatus','bad','No face detected - center the face in frame and retry.');
+  try {
+    setStatus('regStatus','info','Saving...');
+    const photoBase64 = await stampPhoto(canvas, currentPos.latitude, currentPos.longitude);
+    const v = id => document.getElementById(id).value;
+    const res = await callServer('registerStaff', {
+      branch: currentBranch(), name, designation, phone,
+      s1In, s1Out, s2In, s2Out,
+      satS1In: v('regSatS1In'), satS1Out: v('regSatS1Out'), satS2In: v('regSatS2In'), satS2Out: v('regSatS2Out'),
+      photoBase64, faceDescriptor: descriptor
+    });
+    setStatus('regStatus','ok','Registered. Staff ID: ' + res.staffId);
+    loadStaff();
+  } catch (err) { setStatus('regStatus','bad', err.message || String(err)); }
+}
+
+async function captureAndCompletePending() {
+  const staffId = document.getElementById('pendingSelect').value;
+  if (!staffId) return setStatus('pendStatus','bad','Select your name first.');
+  if (!currentPos) return setStatus('pendStatus','bad','Waiting for GPS location - please allow location access.');
+  const canvas = captureFrame('pendVideo','pendCanvas');
+  const descriptor = await getDescriptor(canvas);
+  if (!descriptor) return setStatus('pendStatus','bad','No face detected - center your face in frame and retry.');
+  try {
+    setStatus('pendStatus','info','Saving...');
+    const photoBase64 = await stampPhoto(canvas, currentPos.latitude, currentPos.longitude);
+    await apiCompleteStaffFace({ branch: currentBranch(), staffId, photoBase64, faceDescriptor: descriptor });
+    setStatus('pendStatus','ok','Face saved. You can now check in from the main screen.');
+    loadStaff();
+  } catch (err) { setStatus('pendStatus','bad', err.message || String(err)); }
+}
+
+function tickClock() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-IN', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
+  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
+  document.getElementById('clockLine').textContent = dateStr + ' | ' + timeStr;
+}
+function checkHolidayBanner() {
+  const dateStr = new Date().toISOString().slice(0,10);
+  callServer('getAttendanceMatrix', currentBranch(), dateStr, dateStr).then(rows => {
+    const banner = document.getElementById('holidayBanner');
+    const r = rows && rows[0];
+    if (r && r.S1StatusIn === 'WO') { banner.textContent = 'Today is the weekly off (Sunday). Attendance is not required.'; banner.classList.add('show'); }
+    else if (r && r.S1StatusIn === 'H') { banner.textContent = 'Today is a holiday' + (r.Remarks ? ' - ' + r.Remarks : '') + '. Attendance is not required.'; banner.classList.add('show'); }
+    else { banner.classList.remove('show'); }
+  }).catch(()=>{});
+}
+
+function boot() {
+  document.getElementById('regBranchName').textContent = currentBranchName();
+  document.getElementById('headerBranchName').textContent = currentBranchName();
+  updateVoiceToggleUI();
+  speakWelcome();
+  loadStaff();
+  checkHolidayBanner();
+}
+document.getElementById('regBranchName').textContent = currentBranchName();
+document.getElementById('headerBranchName').textContent = currentBranchName();
+updateVoiceToggleUI();
+tickClock();
+updateGreeting();
+setInterval(updateGreeting, 60000);
+setInterval(tickClock, 1000);
+setInterval(refreshTodayStatus, 60000);
+if (!API_URL) { document.getElementById('setupCard').style.display = 'block'; }
+else { boot(); }
+loadModels();
 </script>
 </body>
 </html>
